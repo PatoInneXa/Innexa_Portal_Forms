@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Portal de Formularios - RIO YELCHO SPA</title>
+
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <span class="header-mist"></span>
+
+    <img src="img/Logo_Yelcho.png" alt="Rio Yelcho" class="header-logo">
+
+    <h1>Portal de Formularios - RIO YELCHO SPA</h1>
+
+    <p>
+        Acceso a formularios de Prevención de Riesgos,<br>
+        Recursos Humanos y Faenas.
+    </p>
+
+</header>
+
+<div id="contenedor"></div>
+
+<script src="js/forms.js"></script>
+
+<script>
+
+const contenedor = document.getElementById("contenedor");
+
+const categorias = [...new Set(forms.map(f => f.categoria))];
+
+categorias.forEach(categoria => {
+
+    const seccion = document.createElement("section");
+
+    seccion.className = "categoria";
+
+    seccion.innerHTML = `
+        <h2>${categoria}</h2>
+        <div class="grid"></div>
+    `;
+
+    const grid = seccion.querySelector(".grid");
+
+    forms
+        .filter(f => f.categoria === categoria)
+        .forEach(form => {
+
+            const card = document.createElement("div");
+
+            card.className = "card";
+
+            card.innerHTML = `
+                <h3>${form.nombre}</h3>
+                <p>${form.descripcion}</p>
+
+                <a
+                    href="${form.url}"
+                    target="_blank">
+                    Abrir formulario
+                </a>
+            `;
+
+            grid.appendChild(card);
+        });
+
+    contenedor.appendChild(seccion);
+
+});
+
+</script>
+
+</body>
+</html>

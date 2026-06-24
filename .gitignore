@@ -1,0 +1,46 @@
+# Sistema operativo
+
+.DS_Store
+Thumbs.db
+
+# VS Code
+
+.vscode/
+
+# JetBrains
+
+.idea/
+
+# Logs
+
+*.log
+
+# Archivos temporales
+
+*.tmp
+*.temp
+
+# Archivos de respaldo
+
+*.bak
+*.old
+
+# Variables de entorno
+
+.env
+.env.local
+
+# Archivos de despliegue
+
+dist/
+build/
+
+# Certificados
+
+*.pem
+*.key
+*.crt
+
+# Configuraciones locales
+
+*.local

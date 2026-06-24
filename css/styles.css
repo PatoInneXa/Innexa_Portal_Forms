@@ -1,0 +1,254 @@
+/* ============================================================
+   Portal de Formularios — RIO YELCHO SPA
+   Theme: Patagonia — Seas & Mountains
+   ============================================================ */
+
+:root {
+    --sky-dark:    #05101e;
+    --sky-mid:     #0b2033;
+    --sea-deep:    #0d2e47;
+    --sea-teal:    #0f4a5c;
+    --ice:         #5bc8db;
+    --glacier:     #9fd6e3;
+    --snow:        #e8f4f7;
+    --glass-bg:    rgba(255,255,255,0.07);
+    --glass-bdr:   rgba(255,255,255,0.13);
+    --shadow-deep: rgba(0,0,0,0.52);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Segoe UI, system-ui, -apple-system, Arial, sans-serif;
+    background: linear-gradient(
+        170deg,
+        var(--sky-dark) 0%,
+        var(--sky-mid)  30%,
+        var(--sea-deep) 68%,
+        #0a3548 100%
+    );
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: var(--snow);
+}
+
+/* ============================================================
+   HEADER — Patagonian sky with layered mountain silhouettes
+   ============================================================ */
+
+header {
+    position: relative;
+    padding: 60px 24px 150px;
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(
+        180deg,
+        #020810 0%,
+        #071425 22%,
+        #0a1f38 52%,
+        #0d2d45 78%,
+        #0f3a54 100%
+    );
+}
+
+/* Aurora/mist overlay */
+header > .header-mist {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 40% at 50% 60%, rgba(15,74,92,0.35) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Far mountain range — distant peaks, atmospheric blue-grey */
+header::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 170px;
+    background: linear-gradient(180deg, #0d3a56 0%, #0a2840 60%, #091e30 100%);
+    clip-path: polygon(
+        0 100%, 0 68%,
+        5%  55%,  9%  66%,
+        14% 40%,  19% 58%,
+        24% 44%,  29% 62%,
+        34% 30%,  38% 50%,
+        43% 36%,  48% 54%,
+        53% 22%,  57% 46%,
+        62% 32%,  67% 52%,
+        72% 38%,  77% 56%,
+        82% 42%,  87% 60%,
+        92% 46%,  96% 62%,
+        100% 54%, 100% 100%
+    );
+}
+
+/* Near mountain range — dark silhouette in foreground */
+header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 96px;
+    background: var(--sky-dark);
+    clip-path: polygon(
+        0 100%, 0 78%,
+        6%  62%,  12% 78%,
+        18% 54%,  24% 72%,
+        30% 48%,  36% 68%,
+        42% 56%,  48% 74%,
+        54% 44%,  60% 66%,
+        66% 52%,  72% 70%,
+        78% 58%,  84% 76%,
+        90% 60%,  95% 76%,
+        100% 68%, 100% 100%
+    );
+}
+
+.header-logo {
+    position: relative;
+    z-index: 2;
+    width: 84px;
+    height: auto;
+    margin-bottom: 22px;
+    filter: drop-shadow(0 0 22px rgba(91,200,219,0.60));
+}
+
+header h1 {
+    position: relative;
+    z-index: 2;
+    font-size: clamp(1.35rem, 4vw, 2.3rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 28px rgba(0,0,0,0.65);
+    margin-bottom: 12px;
+}
+
+header p {
+    position: relative;
+    z-index: 2;
+    font-size: 1rem;
+    color: var(--glacier);
+    font-weight: 300;
+    letter-spacing: 0.2px;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+
+#contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 52px 24px 90px;
+}
+
+/* ============================================================
+   CATEGORIES
+   ============================================================ */
+
+.categoria {
+    margin-top: 60px;
+}
+
+.categoria:first-child {
+    margin-top: 0;
+}
+
+.categoria h2 {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--ice);
+    text-transform: uppercase;
+    letter-spacing: 2.8px;
+    padding-left: 14px;
+    border-left: 3px solid var(--ice);
+    margin-bottom: 24px;
+}
+
+/* ============================================================
+   GRID + CARDS — Frosted ice / glassmorphism
+   ============================================================ */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-bdr);
+    border-radius: 14px;
+    padding: 26px 24px;
+    box-shadow: 0 4px 32px var(--shadow-deep);
+    transition: transform 0.26s ease, box-shadow 0.26s ease, border-color 0.26s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.60);
+    border-color: rgba(91,200,219,0.38);
+}
+
+.card h3 {
+    font-size: 0.97rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.45;
+}
+
+.card p {
+    font-size: 0.88rem;
+    color: var(--glacier);
+    line-height: 1.65;
+    margin-bottom: 22px;
+}
+
+.card a {
+    display: inline-block;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--sea-teal) 0%, #2ab4cc 100%);
+    color: #fff;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 8px;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.card a:hover {
+    opacity: 0.88;
+    transform: scale(1.04);
+}
+
+/* ============================================================
+   BOTTOM — fjord shimmer line
+   ============================================================ */
+
+body::after {
+    content: '';
+    display: block;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--sea-teal) 20%,
+        var(--ice) 50%,
+        var(--sea-teal) 80%,
+        transparent 100%
+    );
+    opacity: 0.45;
+    pointer-events: none;
+}
