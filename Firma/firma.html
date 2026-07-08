@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firma simple · Innexa</title>
+<style>
+  :root{
+    --ocean-900:#0a2540;
+    --ocean-700:#0f3a5c;
+    --teal-500:#1d9e75;
+    --teal-600:#0f6e56;
+    --ink-900:#0c1a24;
+    --bg:#f4f7f8;
+    --card:#ffffff;
+    --border:#dde4e8;
+    --text-muted:#5b6b74;
+    --danger:#c0392b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--ink-900);
+    display:flex;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .card{
+    width:100%;
+    max-width:480px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:28px 24px;
+    box-shadow:0 2px 10px rgba(10,37,64,0.06);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .brand-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--teal-500);
+  }
+  .brand-name{
+    font-size:13px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ocean-700);
+    font-weight:600;
+  }
+  h1{
+    font-size:20px;
+    margin:0 0 6px;
+    color:var(--ocean-900);
+  }
+  .subtitle{
+    font-size:14px;
+    color:var(--text-muted);
+    margin:0 0 22px;
+    line-height:1.5;
+  }
+  .field{
+    margin-bottom:14px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ocean-700);
+    margin-bottom:5px;
+  }
+  input[type="text"]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:14px;
+    background:#fbfcfd;
+  }
+  input[type="text"]:disabled{
+    color:var(--text-muted);
+    background:#eef1f2;
+  }
+  .signature-wrap{
+    margin-top:6px;
+    border:1.5px dashed var(--border);
+    border-radius:10px;
+    background:#fbfcfd;
+    position:relative;
+  }
+  #pad{
+    width:100%;
+    height:180px;
+    display:block;
+    border-radius:10px;
+    touch-action:none;
+  }
+  .pad-hint{
+    position:absolute;
+    bottom:8px;
+    left:0;right:0;
+    text-align:center;
+    font-size:12px;
+    color:var(--text-muted);
+    pointer-events:none;
+  }
+  .pad-hint.hidden{display:none;}
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+  }
+  button{
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    border-radius:8px;
+    padding:12px 16px;
+    cursor:pointer;
+    border:none;
+    transition:opacity .15s ease;
+  }
+  button:active{opacity:0.85;}
+  #clearBtn{
+    flex:0 0 auto;
+    background:#eef1f2;
+    color:var(--ocean-700);
+  }
+  #confirmBtn{
+    flex:1;
+    background:var(--teal-600);
+    color:#fff;
+  }
+  #confirmBtn:disabled{
+    background:#a7c9bf;
+    cursor:not-allowed;
+  }
+  .checkbox-row{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    margin:18px 0 4px;
+    font-size:13px;
+    color:var(--ink-900);
+    line-height:1.5;
+  }
+  .checkbox-row input{margin-top:3px;}
+  .msg{
+    margin-top:16px;
+    padding:12px 14px;
+    border-radius:8px;
+    font-size:13px;
+    display:none;
+  }
+  .msg.show{display:block;}
+  .msg.success{
+    background:#e1f5ee;
+    color:var(--teal-600);
+    border:1px solid #bfe6d6;
+  }
+  .msg.error{
+    background:#fbe9e7;
+    color:var(--danger);
+    border:1px solid #f3c8c2;
+  }
+  .success-view{
+    text-align:center;
+    padding:20px 0;
+  }
+  .success-view .check{
+    width:48px;height:48px;border-radius:50%;
+    background:var(--teal-500);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 14px;
+    font-size:24px;
+  }
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div id="formView">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">Innexa · Rio Yelcho SpA</span>
+    </div>
+    <h1>Confirmación con firma</h1>
+    <p class="subtitle">Revisa tus datos y dibuja tu firma en el recuadro para validar tu respuesta. Este proceso queda registrado con fecha y hora.</p>
+
+    <div class="field">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" disabled>
+    </div>
+
+    <div class="field">
+      <label for="formulario">Formulario</label>
+      <input type="text" id="formulario" disabled>
+    </div>
+
+    <div class="field">
+      <label>Firma</label>
+      <div class="signature-wrap">
+        <canvas id="pad"></canvas>
+        <div class="pad-hint" id="padHint">Dibuja tu firma aquí</div>
+      </div>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="acepto">
+      <label for="acepto" style="margin:0;font-weight:400;">Declaro que la información entregada es veraz y acepto firmar electrónicamente este documento.</label>
+    </div>
+
+    <div class="actions">
+      <button id="clearBtn" type="button">Limpiar</button>
+      <button id="confirmBtn" type="button" disabled>Confirmar firma</button>
+    </div>
+
+    <div class="msg" id="msgBox"></div>
+  </div>
+
+  <div class="success-view hidden" id="successView">
+    <div class="check">✓</div>
+    <h1>Firma registrada</h1>
+    <p class="subtitle">Gracias, tu confirmación fue enviada correctamente. Puedes cerrar esta ventana.</p>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+<script>
+  // ── 1. CONFIGURACIÓN ─────────────────────────────────────────────
+  // Reemplaza esta URL por el endpoint del trigger HTTP del Flujo 2
+  // de Power Automate ("Cuando se recibe una solicitud HTTP").
+  const POWER_AUTOMATE_URL = "https://PEGA_AQUI_TU_URL_DEL_FLUJO_2";
+
+  // ── 2. LEER PARÁMETROS DE LA URL ─────────────────────────────────
+  // El link enviado por correo debe tener esta forma:
+  // firma.html?token=XXXX&nombre=Juan%20Perez&formulario=Certificacion%20EPP&email=juan@rioyelcho.cl
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token") || "";
+  const nombre = params.get("nombre") || "";
+  const formulario = params.get("formulario") || "";
+  const email = params.get("email") || "";
+
+  document.getElementById("nombre").value = nombre;
+  document.getElementById("formulario").value = formulario;
+
+  // ── 3. CANVAS DE FIRMA ───────────────────────────────────────────
+  const canvas = document.getElementById("pad");
+  const padHint = document.getElementById("padHint");
+
+  function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear();
+  }
+
+  const signaturePad = new SignaturePad(canvas, {
+    minWidth: 1,
+    maxWidth: 2.5,
+    penColor: "#0c1a24"
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  signaturePad.addEventListener("beginStroke", () => {
+    padHint.classList.add("hidden");
+  });
+
+  function updateConfirmState() {
+    const acepto = document.getElementById("acepto").checked;
+    const firmado = !signaturePad.isEmpty();
+    document.getElementById("confirmBtn").disabled = !(acepto && firmado && token);
+  }
+
+  document.getElementById("acepto").addEventListener("change", updateConfirmState);
+  canvas.addEventListener("pointerup", updateConfirmState);
+
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    signaturePad.clear();
+    padHint.classList.remove("hidden");
+    updateConfirmState();
+  });
+
+  // ── 4. ENVÍO A POWER AUTOMATE ────────────────────────────────────
+  document.getElementById("confirmBtn").addEventListener("click", async () => {
+    const msgBox = document.getElementById("msgBox");
+    msgBox.className = "msg";
+
+    if (!token) {
+      msgBox.textContent = "Este link no tiene un token válido. Solicita uno nuevo.";
+      msgBox.classList.add("show", "error");
+      return;
+    }
+
+    const confirmBtn = document.getElementById("confirmBtn");
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Enviando...";
+
+    const payload = {
+      token: token,
+      nombre: nombre,
+      formulario: formulario,
+      email: email,
+      firma_base64: signaturePad.toDataURL("image/png"),
+      fecha: new Date().toISOString()
+    };
+
+    try {
+      // mode: "no-cors" evita el error de CORS al llamar directo al
+      // trigger HTTP de Power Automate desde el navegador. A cambio,
+      // no podemos leer la respuesta (queda "opaca"), por eso
+      // mostramos éxito de forma optimista una vez que el request
+      // se envía sin lanzar excepción de red.
+      await fetch(POWER_AUTOMATE_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById("formView").classList.add("hidden");
+      document.getElementById("successView").classList.remove("hidden");
+
+    } catch (err) {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirmar firma";
+      msgBox.textContent = "No se pudo enviar la firma. Revisa tu conexión e intenta nuevamente.";
+      msgBox.classList.add("show", "error");
+    }
+  });
+</script>
+
+</body>
+</html>
