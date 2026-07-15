@@ -220,7 +220,7 @@
 
     <div class="actions">
       <button id="clearBtn" type="button">Limpiar</button>
-      <button id="confirmBtn" type="button" disabled>Confirmar firma</button>
+      <button id="confirmBtn" type="button">Confirmar firma</button>
     </div>
 
     <div class="msg" id="msgBox"></div>
@@ -237,9 +237,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
 <script>
   // ── 1. CONFIGURACIÓN ─────────────────────────────────────────────
-  // Reemplaza esta URL por el endpoint del trigger HTTP del Flujo 2
-  // de Power Automate ("Cuando se recibe una solicitud HTTP").
-  const POWER_AUTOMATE_URL = "https://PEGA_AQUI_TU_URL_DEL_FLUJO_2";
+  // URL base del Formulario de Confirmación de Firma (incluye el "id").
+  const FORM_BASE_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=cnWqDcFgx0agFvIf0Gnm1PGoTfKDyJ1Gi1ELDYXkVgtUNTNFRTYwSEExN0EzOFNBTEc4VUdNRlhMTi4u";
+  // IDs internos de las preguntas del formulario receptor.
+  const FORM_FIELD_TOKEN = "r33464851a77a4acab06d4a1a83f5cc13";
+  const FORM_FIELD_NOMBRE = "r01ab7a74ba4a4b11a337fcad636bba49";
+  const FORM_FIELD_FORMULARIO = "r59b75cc3347844289d1e75662b0b1061";
+  // La pregunta "Formulario de origen" es de tipo Opción múltiple/Dropdown,
+  // por eso Forms exige que el valor venga envuelto en comillas dobles
+  // literales. Si en algún momento la cambias a texto corto, pon esto en false.
+  const FORM_FIELD_FORMULARIO_ES_DROPDOWN = true;
 
   // ── 2. LEER PARÁMETROS DE LA URL ─────────────────────────────────
   // El link enviado por correo debe tener esta forma:
@@ -279,9 +286,9 @@
   });
 
   function updateConfirmState() {
-    const acepto = document.getElementById("acepto").checked;
-    const firmado = !signaturePad.isEmpty();
-    document.getElementById("confirmBtn").disabled = !(acepto && firmado && token);
+    // Ya no deshabilitamos el botón — validamos al hacer click y
+    // mostramos un mensaje específico de qué falta. Esto evita que
+    // el usuario se quede sin saber por qué no puede continuar.
   }
 
   document.getElementById("acepto").addEventListener("change", updateConfirmState);
@@ -293,52 +300,73 @@
     updateConfirmState();
   });
 
-  // ── 4. ENVÍO A POWER AUTOMATE ────────────────────────────────────
-  document.getElementById("confirmBtn").addEventListener("click", async () => {
+  // ── 4. DESCARGA DE LA FIRMA + REDIRECCIÓN AL FORMULARIO ──────────
+  // Como no usamos un trigger HTTP (premium), en vez de enviar la
+  // firma directo a Power Automate, la descargamos como archivo y
+  // llevamos al usuario al Formulario de Confirmación de Firma, ya
+  // prellenado, donde solo debe adjuntar el archivo recién descargado.
+  document.getElementById("confirmBtn").addEventListener("click", () => {
     const msgBox = document.getElementById("msgBox");
     msgBox.className = "msg";
 
+    // Validaciones explícitas, una por una, con mensaje específico.
     if (!token) {
-      msgBox.textContent = "Este link no tiene un token válido. Solicita uno nuevo.";
+      msgBox.textContent = "Este link no tiene un token válido en la URL (falta ?token=... ). Solicita uno nuevo.";
+      msgBox.classList.add("show", "error");
+      return;
+    }
+    if (signaturePad.isEmpty()) {
+      msgBox.textContent = "Debes dibujar tu firma en el recuadro antes de continuar.";
+      msgBox.classList.add("show", "error");
+      return;
+    }
+    if (!document.getElementById("acepto").checked) {
+      msgBox.textContent = "Debes marcar la casilla de aceptación antes de continuar.";
       msgBox.classList.add("show", "error");
       return;
     }
 
     const confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.disabled = true;
-    confirmBtn.textContent = "Enviando...";
+    confirmBtn.textContent = "Preparando...";
 
-    const payload = {
-      token: token,
-      nombre: nombre,
-      formulario: formulario,
-      email: email,
-      firma_base64: signaturePad.toDataURL("image/png"),
-      fecha: new Date().toISOString()
-    };
+    // 1. Descargar la firma como PNG
+    const dataUrl = signaturePad.toDataURL("image/png");
+    const fileName = `firma_${token}.png`;
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    try {
-      // mode: "no-cors" evita el error de CORS al llamar directo al
-      // trigger HTTP de Power Automate desde el navegador. A cambio,
-      // no podemos leer la respuesta (queda "opaca"), por eso
-      // mostramos éxito de forma optimista una vez que el request
-      // se envía sin lanzar excepción de red.
-      await fetch(POWER_AUTOMATE_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+    // 2. Mostrar instrucciones antes de redirigir
+    document.getElementById("formView").classList.add("hidden");
+    document.getElementById("successView").classList.remove("hidden");
+    document.querySelector("#successView h1").textContent = "Firma descargada";
+    document.querySelector("#successView .subtitle").innerHTML =
+      `Se descargó el archivo <strong>${fileName}</strong> a tu dispositivo. ` +
+      `En unos segundos serás redirigido al formulario final: solo debes adjuntar ese archivo y enviar.`;
 
-      document.getElementById("formView").classList.add("hidden");
-      document.getElementById("successView").classList.remove("hidden");
+    // 3. Redirigir al formulario prellenado
+    // OJO: no usamos URLSearchParams.set() aquí porque codifica los
+    // espacios como "+", y Microsoft Forms espera "%20". Armamos la
+    // query manualmente con encodeURIComponent para evitarlo.
+    const valorFormulario = FORM_FIELD_FORMULARIO_ES_DROPDOWN ? `"${formulario}"` : formulario;
+    const params = [
+      [FORM_FIELD_TOKEN, token],
+      [FORM_FIELD_NOMBRE, nombre],
+      [FORM_FIELD_FORMULARIO, valorFormulario]
+    ]
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join("&");
 
-    } catch (err) {
-      confirmBtn.disabled = false;
-      confirmBtn.textContent = "Confirmar firma";
-      msgBox.textContent = "No se pudo enviar la firma. Revisa tu conexión e intenta nuevamente.";
-      msgBox.classList.add("show", "error");
-    }
+    const separator = FORM_BASE_URL.includes("?") ? "&" : "?";
+    const formUrl = `${FORM_BASE_URL}${separator}${params}`;
+
+    setTimeout(() => {
+      window.location.href = formUrl;
+    }, 3500);
   });
 </script>
 
