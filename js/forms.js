@@ -3,7 +3,7 @@ const forms = [
   // PREVENCIÓN DE RIESGOS
 
   {
-    categoria: "Prevención de Riesgos",
+    categoria: "Prevención de Riesgos - Rio Yelcho",
     nombre: "AST Cableado de Seguridad",
     descripcion: "Formulario de análisis de seguridad para trabajos con cableado.",
     url: "https://forms.cloud.microsoft/r/qk1SeuAXBW"
