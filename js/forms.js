@@ -102,6 +102,16 @@ const forms = [
     nombre: "Cierre de OT",
     descripcion: "Registro de cierre de Orden de Trabajo (OT)",
     url: "#"
-  }
+  },
+
+
+   // RR.HH
+
+  {
+    categoria: "Reclutamiento Rio Yelcho - Rio Aysén",
+    nombre: "Formulario Reclutamiento Personal - RRHH",
+    descripcion: "Formulario de reclutamiento de personal aspirante",
+    url: "https://forms.cloud.microsoft/r/8RZ24Ubz8f"
+  },
 
 ];
