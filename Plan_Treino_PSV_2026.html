@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<title>Plan Treino PSV 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+:root {
+  --accent: #1D9E75; --accent-light: #E1F5EE; --accent-dark: #085041;
+  --accent2: #5B3FD4; --accent2-light: #EDE9FB; --accent2-dark: #2D1A8C;
+  --warn: #BA7517; --warn-light: #FAEEDA;
+  --surface: #ffffff; --surface2: #f5f5f0;
+  --border: rgba(0,0,0,0.12); --text: #1a1a1a;
+  --muted: #666; --hint: #999;
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #f0f0f0; }
+  :root {
+    --surface: #2a2a2a; --surface2: #222;
+    --border: rgba(255,255,255,0.12); --text: #f0f0f0;
+    --muted: #aaa; --hint: #777;
+    --accent-light: #0a3d2a; --accent-dark: #5DCAA5;
+    --accent2-light: #1e1540; --accent2-dark: #a48ff5;
+  }
+}
+.app { max-width: 390px; margin: 0 auto; padding: 12px; padding-bottom: 40px; }
+.header { padding: 14px 0 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 14px; }
+.header h1 { font-size: 18px; font-weight: 600; color: var(--text); }
+.stats-row { display: flex; gap: 10px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
+.stat-group { display: flex; align-items: center; gap: 5px; }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-input { width: 58px; padding: 4px 7px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--surface2); color: var(--text); font-size: 14px; font-weight: 600; text-align: center; -webkit-appearance: none; }
+.stat-unit { font-size: 12px; color: var(--hint); }
+
+/* MODE SWITCHER */
+.mode-switcher { display: flex; gap: 0; margin-bottom: 16px; border-radius: 12px; overflow: hidden; border: 0.5px solid var(--border); background: var(--surface2); }
+.mode-btn { flex: 1; padding: 10px 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); text-align: center; -webkit-tap-highlight-color: transparent; transition: all 0.2s; }
+.mode-btn.active-gym { background: var(--accent); color: #fff; border-radius: 11px; }
+.mode-btn.active-cali { background: var(--accent2); color: #fff; border-radius: 11px; }
+
+.week-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.week-tabs::-webkit-scrollbar { display: none; }
+.week-tab { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface2); color: var(--muted); -webkit-tap-highlight-color: transparent; }
+.week-tab.active-gym  { background: var(--accent);  color: #fff; border-color: var(--accent); }
+.week-tab.active-cali { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+
+.day-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.day-tabs::-webkit-scrollbar { display: none; }
+.day-tab { flex-shrink: 0; padding: 8px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface); color: var(--muted); text-align: center; min-width: 62px; -webkit-tap-highlight-color: transparent; }
+.day-tab.active-gym  { background: var(--accent-light);  color: var(--accent-dark);  border-color: var(--accent); }
+.day-tab.active-cali { background: var(--accent2-light); color: var(--accent2-dark); border-color: var(--accent2); }
+
+.section-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.section-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.dot-green { background: var(--accent); }
+.dot-purple { background: var(--accent2); }
+.dot-amber { background: var(--warn); }
+.dot-blue { background: #378ADD; }
+select { width: 100%; padding: 9px 10px; border-radius: 10px; border: 0.5px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; -webkit-appearance: none; appearance: none; }
+.exercise-list { display: flex; flex-direction: column; gap: 10px; }
+.ex-row { display: flex; flex-direction: column; gap: 5px; padding: 11px; background: var(--surface2); border-radius: 10px; border: 0.5px solid var(--border); }
+.ex-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ex-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
+.ex-badge      { font-size: 11px; color: var(--accent-dark);  background: var(--accent-light);  padding: 2px 9px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+.ex-badge-cali { font-size: 11px; color: var(--accent2-dark); background: var(--accent2-light); padding: 2px 9px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+.ex-badge-corp { font-size: 11px; color: #185FA5; background: #E6F1FB; padding: 2px 9px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+.ex-meta { font-size: 11px; color: var(--muted); }
+.ex-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 3px; }
+.ex-weight-row { display: flex; align-items: center; gap: 6px; }
+.ex-weight-label { font-size: 11px; color: var(--muted); }
+.weight-input { width: 66px; padding: 5px 8px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; text-align: center; -webkit-appearance: none; }
+.weight-unit { font-size: 11px; color: var(--hint); }
+.btn-img { display: flex; align-items: center; gap: 4px; padding: 6px 11px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--surface); color: var(--muted); font-size: 12px; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+.btn-img svg { width: 13px; height: 13px; }
+.btn-done-gym  { width: 100%; margin-top: 14px; padding: 14px; background: var(--accent);  color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-done-cali { width: 100%; margin-top: 14px; padding: 14px; background: var(--accent2); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.completed-banner { background: var(--accent-light); border: 0.5px solid var(--accent); border-radius: 10px; padding: 11px 14px; font-size: 13px; color: var(--accent-dark); display: none; text-align: center; margin-top: 10px; font-weight: 600; }
+.cali-info-card { background: var(--accent2-light); border: 0.5px solid var(--accent2); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 12px; color: var(--accent2-dark); line-height: 1.6; }
+.cali-info-card strong { font-weight: 700; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100; align-items: flex-end; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-sheet { background: var(--surface); border-radius: 20px 20px 0 0; width: 100%; max-width: 390px; padding: 0 0 40px; max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 12px auto 0; }
+.modal-header { padding: 14px 16px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid var(--border); }
+.modal-title { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; padding-right: 8px; line-height: 1.3; }
+.modal-close { background: var(--surface2); border: none; font-size: 18px; cursor: pointer; color: var(--muted); line-height: 1; padding: 6px 10px; border-radius: 50%; }
+.modal-body { padding: 16px; }
+.modal-img-wrap { width: 100%; border-radius: 10px; overflow: hidden; background: var(--surface2); border: 0.5px solid var(--border); min-height: 240px; display: flex; align-items: center; justify-content: center; position: relative; padding: 14px; }
+.modal-img-wrap img { width: 100%; display: block; }
+.modal-img-wrap svg { width: 100%; max-width: 320px; height: auto; }
+.modal-img-loading { font-size: 12px; color: var(--muted); padding: 16px; text-align: center; }
+.ex-thumb { width: 34px; height: 34px; border-radius: 8px; background: var(--surface); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ex-thumb svg { width: 24px; height: 24px; }
+.modal-ex-meta { margin-top: 13px; font-size: 13px; color: var(--text); background: var(--surface2); border-radius: 10px; padding: 10px 12px; line-height: 1.8; }
+.modal-ex-meta span { color: var(--muted); font-size: 12px; }
+.modal-btn-yt { display: block; width: 100%; margin-top: 12px; padding: 12px; border-radius: 10px; border: 0.5px solid var(--border); background: var(--surface2); color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.modal-search-note { margin-top: 10px; font-size: 11px; color: var(--hint); text-align: center; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Plan Treino PSV 2026</h1>
+    <div class="stats-row">
+      <div class="stat-group">
+        <span class="stat-label">Peso:</span>
+        <input class="stat-input" type="number" id="pesoActual" value="104" min="30" max="250" step="0.5"/>
+        <span class="stat-unit">kg</span>
+      </div>
+      <div class="stat-group">
+        <span class="stat-label">Estatura:</span>
+        <input class="stat-input" type="number" id="estaturaActual" value="1.80" min="1.0" max="2.5" step="0.01" style="width:62px;"/>
+        <span class="stat-unit">m</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE SWITCHER -->
+  <div class="mode-switcher">
+    <button class="mode-btn active-gym" id="btnGym" onclick="setMode('gym')">🏋️ Gimnasio</button>
+    <button class="mode-btn" id="btnCali" onclick="setMode('cali')">🌳 Calistenia / Parque</button>
+  </div>
+
+  <div class="week-tabs" id="weekTabs"></div>
+  <div class="day-tabs" id="dayTabs"></div>
+
+  <!-- Cali info banner (solo visible en modo cali) -->
+  <div class="cali-info-card" id="caliInfoCard" style="display:none;">
+    <strong>🚶 Caminata diaria:</strong> Mínimo 30 min ida + 30 min vuelta · todos los días<br>
+    <strong id="ropeInfo"></strong>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title"><span class="dot dot-amber"></span>Pre calentamiento</div>
+    <select id="warmupSelect"></select>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title" id="exSectionTitle">
+      <span class="dot dot-green" id="exDot"></span>Ejercicios
+    </div>
+    <div class="exercise-list" id="exerciseList"></div>
+  </div>
+
+  <div class="section-card" id="cardioSection">
+    <div class="section-title"><span class="dot dot-blue"></span>Cardio post rutina</div>
+    <select id="cardioSelect"></select>
+  </div>
+
+  <div id="doneBtnWrap"></div>
+  <div class="completed-banner" id="doneBanner">¡Rutina completada! Excelente trabajo 💪</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle"></span>
+      <button class="modal-close" onclick="closeModalDirect()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img-wrap" id="modalImgWrap" style="--icon-color:var(--accent-dark);"></div>
+      <div class="modal-ex-meta" id="modalMeta"></div>
+      <a class="modal-btn-yt" id="modalSearchLink" target="_blank">Buscar video en YouTube ↗</a>
+      <p class="modal-search-note">Ilustración de referencia</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── SHARED DATA ─── */
+const cardioOptionsGym = [
+  { name: "Bicicleta", detail: "20 min mínimo · 1 serie" },
+  { name: "Elíptica", detail: "20 min mínimo · 1 serie" },
+  { name: "Remadora", detail: "20 min mínimo · 1 serie" },
+  { name: "Caminata con inclinación", detail: "20 min mínimo · 1 serie" },
+  { name: "Bicicleta 15-45", detail: "15 seg máx / 45 seg moderado · 10 series" },
+  { name: "Remadora 15-45", detail: "15 seg máx / 45 seg moderado · 10 series" },
+  { name: "Burpees", detail: "10 reps · 3 series" },
+  { name: "15-15 (Swing + Rodillas altas)", detail: "15 reps c/u · 4-5 series" },
+  { name: "42292 (Jumping Jacks + Mountain Climbers)", detail: "15 reps c/u · 4-5 series" },
+  { name: "EMOM 1 (Burpee + Swing Pesa Rusa)", detail: "5 reps c/u · 5 series" },
+  { name: "Battle Rope", detail: "10 reps · 3-5 series" },
+  { name: "ABS 101", detail: "Leg Raises + Mountain Climbers + Burpee + Hollow Body · 5 series" },
+  { name: "EMOM 2 (Burpee + Abs Twist)", detail: "6 Burpees + 4 Abs Twist · 6 series" },
+  { name: "Clean Combo", detail: "Clean n Press + Burpee + Jumping Jacks · 4-5 series" },
+  { name: "EMOM Burpee", detail: "8 Burpee over the bar · 8 series" },
+  { name: "EMOM Burpee 2", detail: "10 Burpee over the bar · 10 series" }
+];
+const cardioOptionsCali = [
+  { name: "Salto de cuerda continuo", detail: "3 × 3 min (descanso 1 min)" },
+  { name: "Salto de cuerda intervalos", detail: "10 × 30 seg máx / 30 seg trote" },
+  { name: "Caminata con sprint cada 5 min", detail: "20 min total · 4 sprints" },
+  { name: "Rodillas altas", detail: "10 × 30 seg · descanso 30 seg" },
+  { name: "Jumping Jacks", detail: "4 × 50 reps" },
+  { name: "Mountain Climbers", detail: "4 × 20 reps c/pierna" },
+  { name: "Burpees parque", detail: "5 × 10 reps · descanso 60 seg" }
+];
+const warmupOptionsGym = [
+  { name: "Cardio (Bicicleta, Trotadora, Remadora o Elíptica)", detail: "10 min" },
+  { name: "Activación muscular", detail: "5 min" }
+];
+const warmupOptionsCali = [
+  { name: "Caminata rápida al parque + movilidad articular", detail: "10 min" },
+  { name: "Trote suave + círculos de brazos y caderas", detail: "8 min" },
+  { name: "Jumping Jacks + movilidad dinámica", detail: "5 min" }
+];
+
+/* ─── PICTOGRAMAS DE SILUETA SÓLIDA (estilo señalética deportiva) ───
+   No dependen de internet: siempre cargan. Silueta humana rellena con
+   articulaciones marcadas y flecha de movimiento inicio→final cuando aplica. */
+const svgWrap = (inner) => `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+  <g fill="var(--icon-color,#1a1a1a)" stroke="var(--icon-color,#1a1a1a)">${inner}</g>
+</svg>`;
+
+// Helper shapes reused across pictograms (silueta sólida tipo pictograma olímpico)
+const HEAD = (cx, cy, r=13) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`;
+const LIMB = (x1,y1,x2,y2,w=13) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="${w}" stroke-linecap="round"/>`;
+const TORSO = (x1,y1,x2,y2,w=20) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="${w}" stroke-linecap="round"/>`;
+const ARROW = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="3" stroke-dasharray="5 5" marker-end="url(#arrowhead)"/>`;
+const GROUND = (y) => `<line x1="15" y1="${y}" x2="185" y2="${y}" stroke-width="3" opacity="0.25"/>`;
+const ARROWDEF = `<defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--icon-color,#1a1a1a)"/></marker></defs>`;
+
+const exerciseIcons = {
+  // ══ EMPUJE / PUSH ══
+  "push-up": svgWrap(`${ARROWDEF}${GROUND(135)}
+    ${HEAD(150,60)}
+    ${TORSO(140,72,70,100)}
+    ${LIMB(70,100,30,132)}
+    ${LIMB(105,86,90,120)}${LIMB(90,120,60,108)}
+    ${LIMB(115,80,132,58)}
+    ${ARROW(105,60,105,95)}
+  `),
+  "diamond-push-up": svgWrap(`${ARROWDEF}${GROUND(135)}
+    ${HEAD(148,58)}
+    ${TORSO(138,70,68,98)}
+    ${LIMB(68,98,30,130)}
+    ${LIMB(95,84,88,118)}${LIMB(88,118,68,110)}
+    ${LIMB(101,84,88,118)}
+    ${ARROW(103,58,103,90)}
+  `),
+  "pike-push-up": svgWrap(`${ARROWDEF}${GROUND(140)}
+    ${HEAD(65,45)}
+    ${TORSO(70,56,105,100)}
+    ${LIMB(105,100,160,132)}
+    ${LIMB(105,100,78,132)}
+    ${LIMB(80,72,55,95)}
+    ${ARROW(65,60,65,95)}
+  `),
+  "dip": svgWrap(`${ARROWDEF}
+    <rect x="35" y="88" width="10" height="55" rx="3"/>
+    <rect x="155" y="88" width="10" height="55" rx="3"/>
+    <line x1="35" y1="93" x2="165" y2="93" stroke-width="6"/>
+    ${HEAD(100,55)}
+    ${TORSO(100,66,100,98)}
+    ${LIMB(100,75,72,90)}${LIMB(100,75,128,90)}
+    ${LIMB(100,98,88,135)}${LIMB(100,98,112,135)}
+    ${ARROW(100,68,100,105)}
+  `),
+  "press-banca": svgWrap(`
+    <rect x="40" y="112" width="120" height="12" rx="3"/>
+    ${HEAD(58,72)}
+    ${TORSO(58,84,58,108)}
+    <line x1="78" y1="58" x2="140" y2="58" stroke-width="6"/>
+    <circle cx="82" cy="58" r="10"/><circle cx="136" cy="58" r="10"/>
+    ${LIMB(58,88,100,58)}${LIMB(58,88,120,58)}
+    ${LIMB(58,108,42,108)}${LIMB(58,108,82,108)}
+  `),
+  "press-hombro": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,42)}
+    ${TORSO(100,54,100,105)}
+    ${LIMB(100,105,80,145)}${LIMB(100,105,120,145)}
+    ${LIMB(100,68,64,38)}${LIMB(100,68,136,38)}
+    <circle cx="60" cy="34" r="8"/><circle cx="140" cy="34" r="8"/>
+    ${ARROW(100,95,100,50)}
+  `),
+  "curl-bicep": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,38)}
+    ${TORSO(100,50,100,105)}
+    ${LIMB(100,105,80,145)}${LIMB(100,105,120,145)}
+    ${LIMB(100,64,128,80)}
+    <circle cx="130" cy="55" r="9"/>
+    ${LIMB(128,80,110,55)}
+    ${LIMB(100,64,72,90)}
+    ${ARROW(128,82,120,58)}
+  `),
+  "triceps": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,38)}
+    ${TORSO(100,50,100,105)}
+    ${LIMB(100,105,80,145)}${LIMB(100,105,120,145)}
+    ${LIMB(100,62,130,58)}${LIMB(130,58,130,100)}
+    ${LIMB(100,62,74,88)}
+    ${ARROW(130,60,130,95)}
+  `),
+  "vuelo-lateral": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,42)}
+    ${TORSO(100,54,100,105)}
+    ${LIMB(100,105,80,145)}${LIMB(100,105,120,145)}
+    ${LIMB(100,66,52,52)}${LIMB(100,66,148,52)}
+    <circle cx="48" cy="52" r="8"/><circle cx="152" cy="52" r="8"/>
+    ${ARROW(100,95,55,58)}${ARROW(100,95,145,58)}
+  `),
+
+  // ══ JALAR / PULL ══
+  "pull-up": svgWrap(`
+    <rect x="20" y="28" width="160" height="8" rx="3"/>
+    ${HEAD(100,52)}
+    ${LIMB(85,36,100,63)}${LIMB(115,36,100,63)}
+    ${TORSO(100,63,100,108)}
+    ${LIMB(100,108,78,145)}${LIMB(100,108,122,145)}
+  `),
+  "australian-pull-up": svgWrap(`${ARROWDEF}
+    <rect x="15" y="52" width="170" height="8" rx="3"/>
+    ${HEAD(68,88)}
+    ${TORSO(76,80,138,100)}
+    ${LIMB(78,90,100,58)}
+    ${LIMB(138,100,165,132)}
+    ${LIMB(90,96,62,122)}
+    ${ARROW(90,100,60,60)}
+  `),
+  "remo": svgWrap(`${ARROWDEF}${GROUND(140)}
+    ${HEAD(150,48)}
+    ${TORSO(140,58,88,88)}
+    ${LIMB(88,88,58,132)}
+    ${LIMB(88,88,128,132)}
+    ${LIMB(100,92,55,75)}
+    <circle cx="52" cy="73" r="8"/>
+    ${ARROW(95,85,58,78)}
+  `),
+  "iso-pull": svgWrap(`
+    <rect x="20" y="26" width="160" height="8" rx="3"/>
+    ${HEAD(100,50)}
+    ${LIMB(85,34,100,61)}${LIMB(115,34,100,61)}
+    ${TORSO(100,61,100,106)}
+    ${LIMB(100,106,78,145)}${LIMB(100,106,122,145)}
+  `),
+  "superman": svgWrap(`
+    ${GROUND(140)}
+    ${HEAD(45,58)}
+    ${TORSO(56,65,140,92)}
+    ${LIMB(56,66,30,42)}
+    ${LIMB(140,92,168,120)}
+    ${LIMB(120,90,150,68)}
+    <line x1="20" y1="135" x2="180" y2="135" stroke-width="3" stroke-dasharray="4 6" opacity="0.3"/>
+  `),
+  "nadadores": svgWrap(`
+    ${GROUND(140)}
+    ${HEAD(50,62)}
+    ${TORSO(60,68,140,92)}
+    ${LIMB(60,66,32,45)}
+    ${LIMB(140,92,168,72)}
+    ${LIMB(115,88,150,105)}
+    <line x1="20" y1="135" x2="180" y2="135" stroke-width="3" stroke-dasharray="4 6" opacity="0.3"/>
+  `),
+
+  // ══ PIERNA / SQUAT ══
+  "sentadilla": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,40)}
+    ${TORSO(100,52,100,92)}
+    ${LIMB(100,92,72,112)}${LIMB(72,112,72,145)}
+    ${LIMB(100,92,128,112)}${LIMB(128,112,128,145)}
+    ${LIMB(100,68,75,80)}${LIMB(100,68,125,80)}
+    ${ARROW(100,58,100,88)}
+  `),
+  "sentadilla-sumo": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,40)}
+    ${TORSO(100,52,100,88)}
+    ${LIMB(100,88,62,112)}${LIMB(62,112,68,145)}
+    ${LIMB(100,88,138,112)}${LIMB(138,112,132,145)}
+    ${LIMB(100,64,75,55)}${LIMB(100,64,125,55)}
+    ${ARROW(100,56,100,84)}
+  `),
+  "sentadilla-bulgara": svgWrap(`${ARROWDEF}
+    <rect x="128" y="92" width="38" height="10" rx="3"/>
+    ${HEAD(88,40)}
+    ${TORSO(88,52,90,92)}
+    ${LIMB(90,92,60,112)}${LIMB(60,112,60,145)}
+    ${LIMB(90,92,132,95)}
+    <line x1="18" y1="145" x2="100" y2="145" stroke-width="3" opacity="0.25"/>
+    ${ARROW(88,58,88,86)}
+  `),
+  "wall-sit": svgWrap(`
+    <line x1="150" y1="15" x2="150" y2="150" stroke-width="8" opacity="0.3"/>
+    ${HEAD(118,55)}
+    ${TORSO(118,67,118,98)}
+    ${LIMB(118,98,90,98)}${LIMB(90,98,90,145)}
+    ${LIMB(118,98,148,118)}${LIMB(148,118,148,145)}
+    ${GROUND(148)}
+  `),
+  "pistol-squat": svgWrap(`${ARROWDEF}${GROUND(140)}
+    ${HEAD(90,40)}
+    ${TORSO(90,52,95,92)}
+    ${LIMB(95,92,65,108)}${LIMB(65,108,65,138)}
+    ${LIMB(95,92,150,98)}
+    ${LIMB(78,58,58,80)}
+    ${ARROW(90,58,90,86)}
+  `),
+  "estocada": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(90,35)}
+    ${TORSO(90,47,96,86)}
+    ${LIMB(96,86,66,98)}${LIMB(66,98,55,145)}
+    ${LIMB(96,86,132,112)}${LIMB(132,112,152,145)}
+    ${LIMB(88,60,70,72)}${LIMB(88,60,108,72)}
+    ${ARROW(96,80,96,105)}
+  `),
+  "puente-gluteo": svgWrap(`
+    ${GROUND(130)}
+    ${HEAD(52,105)}
+    ${TORSO(64,102,100,92)}
+    ${LIMB(100,92,138,112)}${LIMB(138,112,163,130)}
+    ${LIMB(100,92,108,130)}
+    <line x1="20" y1="132" x2="180" y2="132" stroke-width="3" opacity="0.15"/>
+  `),
+  "calf-raise": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,38)}
+    ${TORSO(100,50,100,98)}
+    ${LIMB(100,98,80,128)}<circle cx="80" cy="140" r="6"/>
+    ${LIMB(100,98,120,128)}<circle cx="120" cy="140" r="6"/>
+    <line x1="72" y1="142" x2="88" y2="142" stroke-width="4"/>
+    <line x1="112" y1="142" x2="128" y2="142" stroke-width="4"/>
+    ${ARROW(100,120,100,105)}
+  `),
+  "jump-squat": svgWrap(`${ARROWDEF}
+    ${HEAD(100,32)}
+    ${TORSO(100,44,100,72)}
+    ${LIMB(100,72,76,88)}${LIMB(76,88,82,112)}
+    ${LIMB(100,72,124,88)}${LIMB(124,88,118,112)}
+    ${LIMB(100,52,74,42)}${LIMB(100,52,126,42)}
+    <path d="M55 130 Q100 112 145 130" stroke-width="3" fill="none" stroke-dasharray="3 6" opacity="0.4"/>
+    ${GROUND(140)}
+  `),
+  "peso-muerto": svgWrap(`${ARROWDEF}${GROUND(140)}
+    ${HEAD(78,48)}
+    ${TORSO(78,58,95,92)}
+    ${LIMB(95,92,72,138)}
+    ${LIMB(95,92,122,128)}
+    ${LIMB(78,66,52,98)}
+    <line x1="42" y1="98" x2="42" y2="132" stroke-width="6"/>
+    <circle cx="42" cy="98" r="10"/><circle cx="42" cy="132" r="10"/>
+    ${ARROW(78,70,78,45)}
+  `),
+
+  // ══ CORE / ABS ══
+  "leg-raise": svgWrap(`${ARROWDEF}
+    <rect x="15" y="18" width="170" height="8" rx="3"/>
+    ${HEAD(65,42)}
+    ${LIMB(75,36,95,24)}
+    ${TORSO(75,50,98,88)}
+    ${LIMB(98,88,140,58)}
+    ${LIMB(98,88,145,92)}
+    ${ARROW(120,85,138,62)}
+  `),
+  "abs-twist": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,40)}
+    ${TORSO(100,52,95,98)}
+    ${LIMB(95,98,70,140)}${LIMB(95,98,120,140)}
+    ${LIMB(96,64,58,55)}${LIMB(96,64,140,80)}
+    <path d="M50 128 Q100 145 150 128" stroke-width="3" fill="none" stroke-dasharray="3 6" opacity="0.4"/>
+  `),
+  "hollow-body": svgWrap(`
+    ${GROUND(118)}
+    ${HEAD(52,88)}
+    ${TORSO(64,92,102,104)}
+    ${LIMB(102,104,148,84)}
+    ${LIMB(102,104,145,118)}
+    <line x1="18" y1="120" x2="182" y2="120" stroke-width="3" opacity="0.15"/>
+  `),
+  "russian-twist": svgWrap(`${ARROWDEF}
+    ${TORSO(100,95,100,60)}
+    ${LIMB(100,68,70,58)}${LIMB(70,58,44,42)}
+    ${LIMB(100,68,130,58)}${LIMB(130,58,156,42)}
+    ${HEAD(100,90,10)}
+    ${LIMB(100,102,80,142)}${LIMB(100,102,120,142)}
+    <path d="M44 52 L156 52" stroke-width="3" stroke-dasharray="3 6" opacity="0.4"/>
+  `),
+  "mountain-climber": svgWrap(`${ARROWDEF}${GROUND(135)}
+    ${LIMB(40,128,160,88,10)}
+    ${HEAD(150,72)}
+    ${LIMB(40,128,58,100)}
+    ${LIMB(40,128,98,113)}
+    ${LIMB(98,113,80,88)}
+    ${ARROW(100,113,80,92)}
+  `),
+
+  // ══ CARDIO / FULL BODY EXPLOSIVO ══
+  "burpee": svgWrap(`${ARROWDEF}${GROUND(140)}
+    ${HEAD(58,112)}
+    ${TORSO(68,116,118,98)}
+    ${LIMB(118,98,158,58)}
+    ${LIMB(118,98,148,113)}
+    ${LIMB(60,122,40,142)}${LIMB(60,122,88,138)}
+    ${ARROW(100,105,140,68)}
+  `),
+  "jumping-jack": svgWrap(`
+    ${HEAD(100,32)}
+    ${TORSO(100,44,100,96)}
+    ${LIMB(100,96,58,142)}${LIMB(100,96,142,142)}
+    ${LIMB(100,58,52,26)}${LIMB(100,58,148,26)}
+    ${GROUND(145)}
+  `),
+  "cuerda": svgWrap(`
+    <path d="M38 100 Q28 55 70 40 Q100 30 130 40 Q172 55 162 100" stroke-width="4" fill="none"/>
+    ${HEAD(100,56)}
+    ${TORSO(100,68,100,105)}
+    ${LIMB(100,105,78,145)}${LIMB(100,105,122,145)}
+    ${LIMB(100,78,72,92)}${LIMB(100,78,128,92)}
+    ${GROUND(148)}
+  `),
+  "caminata": svgWrap(`${ARROWDEF}
+    ${HEAD(70,38)}
+    ${TORSO(74,50,80,92)}
+    ${LIMB(80,92,52,140)}
+    ${LIMB(80,92,112,128)}${LIMB(112,128,142,128)}
+    ${LIMB(76,62,48,72)}${LIMB(76,62,104,52)}
+    <path d="M118 38 Q142 38 152 54" stroke-width="3" fill="none" stroke-dasharray="4 6" opacity="0.4"/>
+    <path d="M124 54 Q146 54 155 66" stroke-width="3" fill="none" stroke-dasharray="4 6" opacity="0.4"/>
+    ${GROUND(142)}
+  `),
+  "rodillas-altas": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(90,32)}
+    ${TORSO(90,44,90,86)}
+    ${LIMB(90,86,60,96)}${LIMB(60,96,60,142)}
+    ${LIMB(90,86,120,66)}${LIMB(120,66,120,44)}
+    ${LIMB(90,56,58,46)}${LIMB(90,56,120,60)}
+    ${ARROW(120,64,120,48)}
+  `),
+  "kettlebell-swing": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,40)}
+    ${TORSO(100,52,100,92)}
+    ${LIMB(100,92,75,128)}${LIMB(100,92,125,128)}
+    ${LIMB(100,64,68,88)}${LIMB(100,64,132,88)}
+    <circle cx="100" cy="105" r="12"/>
+    ${LIMB(100,92,100,102)}
+    ${ARROW(100,70,100,95)}
+  `),
+  "battle-rope": svgWrap(`${ARROWDEF}${GROUND(148)}
+    ${HEAD(100,36)}
+    ${TORSO(100,48,100,92)}
+    ${LIMB(100,92,80,145)}${LIMB(100,92,120,145)}
+    <path d="M100 62 Q68 45 52 72 Q42 92 60 98" stroke-width="5" fill="none"/>
+    <path d="M100 62 Q132 78 148 55 Q158 40 142 34" stroke-width="5" fill="none"/>
+    ${ARROW(55,80,55,55)}${ARROW(145,50,145,75)}
+  `)
+};
+
+// Mapeo por keyword (orden importa: primero coincidencias más específicas)
+const iconMap = [
+  ["diamante", "diamond-push-up"],
+  ["pike push", "pike-push-up"],
+  ["push up", "push-up"], ["push ups", "push-up"], ["flexion", "push-up"], ["flexiones", "push-up"],
+  ["dip", "dip"], ["fondos en paralelas", "dip"], ["fondos", "dip"],
+  ["press de banca", "press-banca"],
+  ["press de pecho", "press-banca"], ["press de hombro", "press-hombro"], ["press militar", "press-hombro"],
+  ["curl de bícep", "curl-bicep"], ["curl de bicep", "curl-bicep"], ["curl barra z", "curl-bicep"], ["curl concentrado", "curl-bicep"], ["curl martillo", "curl-bicep"],
+  ["tríceps", "triceps"], ["triceps", "triceps"], ["rompe cráneo", "triceps"], ["extensión de codo", "triceps"],
+  ["vuelo lateral", "vuelo-lateral"], ["elevación frontal", "vuelo-lateral"],
+  ["australian pull", "australian-pull-up"],
+  ["iso pull", "iso-pull"],
+  ["pull up", "pull-up"], ["pull ups", "pull-up"],
+  ["remo", "remo"], ["facepull", "remo"], ["jalón", "remo"], ["jalon", "remo"], ["jalones", "remo"],
+  ["superman", "superman"],
+  ["nadadores", "nadadores"],
+  ["sentadilla sumo", "sentadilla-sumo"],
+  ["sentadilla búlgara", "sentadilla-bulgara"], ["sentadilla bulgara", "sentadilla-bulgara"],
+  ["wall sit", "wall-sit"], ["isométrica", "wall-sit"],
+  ["pistol", "pistol-squat"],
+  ["jump squat", "jump-squat"],
+  ["sentadilla", "sentadilla"], ["sentadillas", "sentadilla"], ["squat", "sentadilla"], ["goblet squat", "sentadilla"],
+  ["estocada", "estocada"], ["estocadas", "estocada"], ["lunge", "estocada"],
+  ["puente glúteo", "puente-gluteo"],
+  ["calf", "calf-raise"], ["tibials", "calf-raise"],
+  ["peso muerto", "peso-muerto"], ["prensa de piernas", "peso-muerto"], ["extensión de piernas", "peso-muerto"], ["extensión de rodilla", "peso-muerto"], ["curl isquiotibiales", "peso-muerto"],
+  ["leg raise", "leg-raise"], ["leg raises", "leg-raise"], ["rueda abdominal", "leg-raise"], ["set abs", "leg-raise"],
+  ["hollow body", "hollow-body"],
+  ["abs twist", "abs-twist"], ["russian twist", "russian-twist"],
+  ["mountain climber", "mountain-climber"],
+  ["burpee", "burpee"],
+  ["jumping jack", "jumping-jack"],
+  ["cuerda", "cuerda"], ["salto de cuerda", "cuerda"],
+  ["caminata", "caminata"], ["trote", "caminata"], ["bicicleta", "caminata"], ["elíptica", "caminata"], ["remadora", "caminata"],
+  ["rodillas altas", "rodillas-altas"],
+  ["swing pesa rusa", "kettlebell-swing"],
+  ["battle rope", "battle-rope"],
+  ["circuito", "burpee"], ["emom", "burpee"], ["hiit", "burpee"], ["clean combo", "kettlebell-swing"]
+];
+
+function getExerciseIcon(name) {
+  const lower = name.toLowerCase();
+  for (const [key, iconKey] of iconMap) {
+    if (lower.includes(key)) return exerciseIcons[iconKey];
+  }
+  return exerciseIcons["sentadilla"]; // fallback genérico (figura de pie)
+}
+function getYtQuery(name) {
+  return "https://www.youtube.com/results?search_query=" + encodeURIComponent("como hacer " + name + " ejercicio");
+}
+
+
+/* ─── GYM WEEKS ─── */
+const gymWeeks = [
+  { name: "Adaptación", days: [
+    { label: "Día 1", name: "Pecho", exercises: [
+      { name: "Press de banca", reps: "12 a 15", series: "4 a 5", peso: 35 },
+      { name: "Press de pecho - Mancuernas", reps: "12 a 15", series: "4 a 5", peso: 28 },
+      { name: "Flexiones de brazos", reps: "15 a 20", series: "4 a 5", peso: "Corporal" },
+      { name: "Jalones de polea (Prona abierta)", reps: "12 a 15", series: "3", peso: 55 },
+      { name: "Jalones de polea (Supina cerrada)", reps: "12 a 15", series: "3", peso: 45 }
+    ]},
+    { label: "Día 2", name: "Piernas", exercises: [
+      { name: "Sentadillas", reps: "12 a 15", series: "4 a 5", peso: 55 },
+      { name: "Estocadas caminando", reps: "15 a 20 (ida y vuelta)", series: "4", peso: 10 },
+      { name: "Puente glúteo", reps: "15", series: "4 a 5", peso: 30 },
+      { name: "Prensa de piernas", reps: "15 a 20", series: "4 a 5", peso: 100 },
+      { name: "Calf raises", reps: "20 calfs", series: "5", peso: "Corporal" },
+      { name: "Tibials raises", reps: "20 tibials", series: "5", peso: "Corporal" }
+    ]},
+    { label: "Día 3", name: "Espalda", exercises: [
+      { name: "Jalones de polea (Prona abierta)", reps: "12 a 15", series: "3", peso: 55 },
+      { name: "Jalones de polea (Supina cerrada)", reps: "12 a 15", series: "3", peso: 45 },
+      { name: "Push ups", reps: "15", series: "5", peso: "Corporal" },
+      { name: "Remo a una mano", reps: "15", series: "4 a 5", peso: 26 },
+      { name: "Facepulls", reps: "12 a 15", series: "4 a 5", peso: 12.5 },
+      { name: "Pull ups (Supina)", reps: "8 a 10", series: "4 a 5", peso: "Asistido -49 kg" },
+      { name: "Pull ups (Prona)", reps: "8 a 10", series: "4 a 5", peso: "Asistido -43 kg" }
+    ]},
+    { label: "Día 4", name: "Full Body", exercises: [
+      { name: "Peso muerto", reps: "12 a 15", series: "4 a 5", peso: 50 },
+      { name: "Australian pull ups", reps: "15 a 20", series: "4 a 5", peso: "Corporal" },
+      { name: "Estocadas caminando", reps: "15 a 20 (ida y vuelta)", series: "4 a 5", peso: 12.5 },
+      { name: "Press de pecho - Mancuernas", reps: "15", series: "4 a 5", peso: 28 }
+    ]},
+    { label: "Día 5", name: "Brazos/Abs", exercises: [
+      { name: "Curl de bícep alternado", reps: "15", series: "4 a 5", peso: 12 },
+      { name: "Fondos en paralelas", reps: "10 a 12", series: "4 a 5", peso: "Asistido -43 kg" },
+      { name: "Curl de bícep en cuclillas", reps: "15", series: "4 a 5", peso: 15 },
+      { name: "Tríceps Superman con cable", reps: "15", series: "4 a 5", peso: 17.5 },
+      { name: "Abs twist", reps: "8 por pierna", series: "4", peso: "Corporal" },
+      { name: "Superman hold", reps: "30 a 40 seg", series: "4", peso: "Corporal" },
+      { name: "Leg raises", reps: "15", series: "4 a 5", peso: "Corporal" }
+    ]}
+  ]},
+  { name: "Resistencia", days: [
+    { label: "Día 1", name: "Pecho", exercises: [
+      { name: "Australian pull ups + Pausa isométrica", reps: "12 a 15 +2 seg pausa", series: "4 a 5", peso: "Corporal" },
+      { name: "Push ups", reps: "15", series: "4 a 5", peso: "Corporal" },
+      { name: "Press de pecho inclinado con Mancuernas", reps: "15", series: "4 a 5", peso: 26 },
+      { name: "Press de banca", reps: "15", series: "3", peso: 40 },
+      { name: "Push ups (en combo)", reps: "15", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día 2", name: "Piernas", exercises: [
+      { name: "Sentadillas + Sentadilla isométrica", reps: "15 a 20 + 40 seg", series: "4 a 5", peso: 50 },
+      { name: "Peso muerto rumano con Mancuernas", reps: "15", series: "4 a 5", peso: 28 },
+      { name: "Extensión de piernas", reps: "15 a 20", series: "4 a 5", peso: 30 },
+      { name: "Prensa de piernas", reps: "25-20-15-10", series: "4 a 5", peso: "90 a 120" },
+      { name: "Calf raises", reps: "20 calfs", series: "5", peso: "Corporal" },
+      { name: "Tibials raises", reps: "20 tibials", series: "5", peso: "Corporal" }
+    ]},
+    { label: "Día 3", name: "Espalda", exercises: [
+      { name: "Iso pull up (isométrico)", reps: "6 seg por posición", series: "3", peso: "Asistido -43 kg" },
+      { name: "Jalón al pecho (Prona)", reps: "12 a 15", series: "3", peso: 56 },
+      { name: "Press de hombro con Mancuernas", reps: "12 a 15", series: "4 a 5", peso: 10 },
+      { name: "Push ups", reps: "15", series: "6", peso: "Corporal" },
+      { name: "Remo bajo con polea", reps: "12 a 15", series: "4 a 5", peso: 56 },
+      { name: "Remo con barra", reps: "15 remos", series: "5", peso: 35 },
+      { name: "Nadadores", reps: "12", series: "5", peso: "Corporal" }
+    ]},
+    { label: "Día 4", name: "Full Body", exercises: [
+      { name: "Peso muerto con barra", reps: "12 a 15", series: "4", peso: 40 },
+      { name: "Peso muerto con Mancuernas", reps: "12 a 15", series: "4", peso: 26 },
+      { name: "Australian pull ups", reps: "12 a 15", series: "4 a 5", peso: "Corporal" },
+      { name: "Push ups", reps: "12 a 15", series: "4 a 5", peso: "Corporal" },
+      { name: "Estocadas caminando", reps: "15 a 20", series: "4 a 5", peso: 12.5 },
+      { name: "Elevación frontal", reps: "12 a 15", series: "4 a 5", peso: 10 },
+      { name: "Circuito pierna (Calfs + Tibials + Jumping Jacks)", reps: "20 c/u", series: "4", peso: "Corporal" },
+      { name: "Vuelo lateral", reps: "12 a 15", series: "4 a 5", peso: 8 }
+    ]},
+    { label: "Día 5", name: "Brazos/Abs", exercises: [
+      { name: "Curl barra Z + Push ups", reps: "15 y 15", series: "4 a 5", peso: 30 },
+      { name: "Tríceps en polea", reps: "15", series: "4 a 5", peso: 17.5 },
+      { name: "Curl de bícep en cuclillas", reps: "15", series: "4 a 5", peso: 15 },
+      { name: "Curl concentrado", reps: "15", series: "4 a 5", peso: 12 },
+      { name: "Leg raises a plancha", reps: "15 + 40 seg", series: "4", peso: "Corporal" },
+      { name: "Superman hold + Hollow body", reps: "30 a 40 seg", series: "4", peso: "Corporal" }
+    ]}
+  ]},
+  { name: "Fuerza", days: [
+    { label: "Día 1", name: "Pecho", exercises: [
+      { name: "Press de banca", reps: "15-12-10-8-6", series: "4 a 5", peso: "10 a 25" },
+      { name: "Fondos en paralelas", reps: "10", series: "4 a 5", peso: "Corporal" },
+      { name: "Push ups profundos", reps: "15", series: "4 a 5", peso: "Corporal" },
+      { name: "Jalón de polea alta (Prona)", reps: "15", series: "4", peso: 56 },
+      { name: "Jalón de polea alta (Supino)", reps: "15", series: "4", peso: 45 },
+      { name: "Circuito calisténico (Australian + Push ups + Press suelo + Remo + Hombro)", reps: "12 a 15 c/u", series: "4 a 5", peso: 12 }
+    ]},
+    { label: "Día 2", name: "Piernas", exercises: [
+      { name: "Sentadillas", reps: "15-12-10-8-6", series: "5", peso: "30 a 50" },
+      { name: "Peso muerto con barra", reps: "12-10-8-6-12", series: "5", peso: "20 a 50" },
+      { name: "Sentadilla sumo", reps: "15 a 20", series: "4 a 5", peso: 18 },
+      { name: "Calf 1 pierna", reps: "15 por pierna", series: "4", peso: "Corporal" },
+      { name: "Calfs (bilateral)", reps: "20", series: "4", peso: "Corporal" }
+    ]},
+    { label: "Día 3", name: "Espalda", exercises: [
+      { name: "Pull ups (Prona)", reps: "8 a 10", series: "3", peso: "Asistido -43 kg" },
+      { name: "Pull ups (Supina)", reps: "8 a 10", series: "3", peso: "Asistido -49 kg" },
+      { name: "Remo a una mano", reps: "15-12-10-8", series: "4", peso: "22 a 30" },
+      { name: "Remo bajo con polea", reps: "12-10-8-6", series: "4", peso: "50 a 73" },
+      { name: "Jalón de polea alta (Prona)", reps: "12 a 15", series: "3", peso: "50 a 66" },
+      { name: "Jalón de polea alta (Supino)", reps: "12 a 15", series: "3", peso: "45 a 56" },
+      { name: "HIIT (Squat salto + Push ups + Mountain Climbers + Squat isométrico + Swing)", reps: "10 c/u", series: "4 a 5", peso: 14 }
+    ]},
+    { label: "Día 4", name: "Full Body", exercises: [
+      { name: "Peso muerto", reps: "12-10-8-6-4", series: "5", peso: "30 a 60" },
+      { name: "Australian pull ups", reps: "15 a 20", series: "6 a 8", peso: "Corporal" },
+      { name: "Push ups", reps: "15 a 20", series: "6 a 8", peso: "Corporal" },
+      { name: "Press militar", reps: "15-12-10-8", series: "4", peso: "5 a 20" },
+      { name: "Goblet squat", reps: "15 a 20", series: "4 a 5", peso: 28 },
+      { name: "Circuito pierna (Calfs + Tibials + Jumping Jacks)", reps: "20 c/u", series: "4", peso: "Corporal" },
+      { name: "Jump squat", reps: "20", series: "4 a 5", peso: "Corporal" }
+    ]},
+    { label: "Día 5", name: "Brazos/Abs", exercises: [
+      { name: "Curl barra Z", reps: "10-8-6-4", series: "4 a 5", peso: "10 a 25" },
+      { name: "Rompe cráneo", reps: "15", series: "4 a 5", peso: "Corporal" },
+      { name: "Circuito brazo (Curl banca + Tríceps cabeza + Curl martillo + Push ups)", reps: "15 c/u", series: "4", peso: 12 },
+      { name: "Leg raises a plancha", reps: "15 + 40 seg", series: "4", peso: "Corporal" },
+      { name: "Rueda abdominal o Set Abs", reps: "10 a 15", series: "4", peso: "Corporal" }
+    ]}
+  ]},
+  { name: "Descarga", days: [
+    { label: "Día 1", name: "Pecho", exercises: [
+      { name: "Press militar", reps: "15 a 20", series: "4", peso: "10 a 20" },
+      { name: "Press de pecho con Mancuernas", reps: "15 a 20", series: "4", peso: "20 a 30" },
+      { name: "Push ups", reps: "15 a 20", series: "4 a 5", peso: "Corporal" },
+      { name: "Jalones de polea (Prona abierta)", reps: "12 a 15", series: "4", peso: 55 },
+      { name: "Set Abs", reps: "12 a 15", series: "3 a 4", peso: "Corporal" }
+    ]},
+    { label: "Día 2", name: "Piernas", exercises: [
+      { name: "Sentadillas", reps: "12 a 15", series: "4 a 5", peso: 55 },
+      { name: "Extensión de rodilla", reps: "15 a 20", series: "4", peso: 10 },
+      { name: "Peso muerto rumano con barra", reps: "15", series: "4 a 5", peso: 30 },
+      { name: "Curl isquiotibiales en máquina", reps: "15 a 20", series: "4 a 5", peso: 100 },
+      { name: "Calf raises", reps: "25 calfs", series: "5", peso: "Corporal" },
+      { name: "Tibials raises", reps: "25 tibials", series: "5", peso: "Corporal" },
+      { name: "Set Abs", reps: "12 a 15", series: "3 a 4", peso: "Corporal" }
+    ]},
+    { label: "Día 3", name: "Espalda", exercises: [
+      { name: "Jalones de polea (Prona abierta)", reps: "12 a 15", series: "3", peso: 55 },
+      { name: "Jalones de polea (Supina cerrada)", reps: "12 a 15", series: "3", peso: 45 },
+      { name: "Remo bajo en polea", reps: "15", series: "4", peso: 56 },
+      { name: "Set Abs", reps: "12 a 15", series: "3 a 4", peso: "Corporal" },
+      { name: "Pull ups", reps: "10", series: "6", peso: "Asistido -49 kg" }
+    ]},
+    { label: "Día 4", name: "Full Body", exercises: [
+      { name: "Peso muerto", reps: "12 a 15", series: "4", peso: 40 },
+      { name: "Remo a una mano", reps: "12 a 15", series: "4", peso: "24 a 30" },
+      { name: "Swing pesa rusa", reps: "15 a 20", series: "4", peso: "12 a 16" },
+      { name: "Estocadas caminando", reps: "20", series: "5", peso: "Corporal" },
+      { name: "Press de pecho con Mancuernas", reps: "15", series: "4 a 5", peso: 28 }
+    ]},
+    { label: "Día 5", name: "Brazos/Abs", exercises: [
+      { name: "Push ups", reps: "15", series: "6", peso: "Corporal" },
+      { name: "Australian pull ups", reps: "15", series: "6", peso: "Corporal" },
+      { name: "Curl concentrado", reps: "15", series: "4", peso: 10 },
+      { name: "Extensión de codo a una mano", reps: "12 a 15", series: "4", peso: 12 },
+      { name: "Leg raises", reps: "15", series: "4", peso: "Corporal" }
+    ]}
+  ]}
+];
+
+/* ─── CALISTENIA WEEKS ─── */
+// 3 días/semana · Full Body · sin equipo (parque con barras bajas, paralelas, pull-up)
+// Día A = Empuje · Día B = Jalar + Pierna · Día C = Full Body explosivo + Core
+// Cardio: salto cuerda Lunes y Viernes; caminata todos los días
+const caliWeeks = [
+  { name: "Semana 1", rope: true, days: [
+    { label: "Día A", name: "Empuje", exercises: [
+      { name: "Push ups (calentamiento)", reps: "10", series: "2", peso: "Corporal" },
+      { name: "Push ups (trabajo)", reps: "15 a 20", series: "4", peso: "Corporal" },
+      { name: "Pike push ups (hombros)", reps: "10 a 12", series: "3", peso: "Corporal" },
+      { name: "Dips en banco/paralelas", reps: "10 a 12", series: "4", peso: "Corporal" },
+      { name: "Sentadilla + pausa 2 seg", reps: "15 a 20", series: "4", peso: "Corporal" },
+      { name: "Estocadas caminando", reps: "12 por pierna", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día B", name: "Jalar + Pierna", exercises: [
+      { name: "Australian pull ups (barra baja)", reps: "12 a 15", series: "4", peso: "Corporal" },
+      { name: "Pull ups (agarre prono)", reps: "5 a 8", series: "4", peso: "Corporal" },
+      { name: "Superman hold (suelo)", reps: "30 a 40 seg", series: "4", peso: "Corporal" },
+      { name: "Sentadilla sumo", reps: "20", series: "4", peso: "Corporal" },
+      { name: "Puente glúteo", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Calf raises (1 pierna)", reps: "20 por pierna", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día C", name: "Full Body + Core", exercises: [
+      { name: "Burpees", reps: "8", series: "4", peso: "Corporal" },
+      { name: "Jump squat", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Push ups explosivos", reps: "8 a 10", series: "4", peso: "Corporal" },
+      { name: "Australian pull ups (ritmo rápido)", reps: "12", series: "4", peso: "Corporal" },
+      { name: "Leg raises (barra o suelo)", reps: "12 a 15", series: "4", peso: "Corporal" },
+      { name: "Hollow body hold", reps: "30 seg", series: "3", peso: "Corporal" }
+    ]}
+  ]},
+  { name: "Semana 2", rope: true, days: [
+    { label: "Día A", name: "Empuje +", exercises: [
+      { name: "Push ups diamante", reps: "12 a 15", series: "4", peso: "Corporal" },
+      { name: "Push ups declinados (pies en banco)", reps: "12", series: "4", peso: "Corporal" },
+      { name: "Pike push ups", reps: "12", series: "4", peso: "Corporal" },
+      { name: "Dips en paralelas", reps: "12 a 15", series: "4", peso: "Corporal" },
+      { name: "Sentadilla isométrica (wall sit)", reps: "45 seg", series: "4", peso: "Corporal" },
+      { name: "Estocadas en salto", reps: "10 por pierna", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día B", name: "Jalar + Pierna", exercises: [
+      { name: "Pull ups (agarre supino)", reps: "6 a 8", series: "4", peso: "Corporal" },
+      { name: "Australian pull ups + pausa 2 seg", reps: "12", series: "4", peso: "Corporal" },
+      { name: "Nadadores (suelo)", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Sentadilla búlgara (pie en banco)", reps: "10 por pierna", series: "4", peso: "Corporal" },
+      { name: "Puente glúteo con pausa 2 seg", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Tibials raises", reps: "25", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día C", name: "Full Body + Core", exercises: [
+      { name: "Burpees + pull up combo", reps: "6", series: "4", peso: "Corporal" },
+      { name: "Jump squat", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Push ups en combo (normal + diamante)", reps: "10 + 5", series: "4", peso: "Corporal" },
+      { name: "Abs twist (suelo)", reps: "15 por lado", series: "4", peso: "Corporal" },
+      { name: "Leg raises + Hollow body (circuito)", reps: "12 + 30 seg", series: "4", peso: "Corporal" },
+      { name: "Mountain climbers", reps: "20 por pierna", series: "4", peso: "Corporal" }
+    ]}
+  ]},
+  { name: "Semana 3", rope: true, days: [
+    { label: "Día A", name: "Empuje Fuerza", exercises: [
+      { name: "Push ups (máximas reps)", reps: "Hasta el fallo", series: "5", peso: "Corporal" },
+      { name: "Dips en paralelas (lento: 3 seg bajada)", reps: "10", series: "5", peso: "Corporal" },
+      { name: "Pike push ups + pausa abajo 2 seg", reps: "10", series: "4", peso: "Corporal" },
+      { name: "Sentadilla pistol asistida (barra)", reps: "6 por pierna", series: "4", peso: "Corporal" },
+      { name: "Sentadilla búlgara", reps: "12 por pierna", series: "4", peso: "Corporal" },
+      { name: "Calf raises bilateral", reps: "25", series: "4", peso: "Corporal" }
+    ]},
+    { label: "Día B", name: "Jalar Fuerza", exercises: [
+      { name: "Pull ups (máximas reps)", reps: "Hasta el fallo", series: "5", peso: "Corporal" },
+      { name: "Australian pull ups (lento: 3 seg bajada)", reps: "10", series: "5", peso: "Corporal" },
+      { name: "Iso pull (sostener arriba 5 seg)", reps: "6", series: "4", peso: "Corporal" },
+      { name: "Superman hold", reps: "40 seg", series: "4", peso: "Corporal" },
+      { name: "Puente glúteo + extensión 1 pierna", reps: "12 por pierna", series: "4", peso: "Corporal" },
+      { name: "Estocadas caminando", reps: "15 por pierna", series: "4", peso: "Corporal" }
+    ]},
+    { label: "Día C", name: "Full Body HIIT", exercises: [
+      { name: "Circuito EMOM (Burpee + Pull up + Push up)", reps: "5 c/u", series: "6", peso: "Corporal" },
+      { name: "Jump squat explosivo", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Mountain climbers", reps: "20 por pierna", series: "4", peso: "Corporal" },
+      { name: "Leg raises (barra)", reps: "15", series: "4", peso: "Corporal" },
+      { name: "Abs twist (suelo)", reps: "20 por lado", series: "3", peso: "Corporal" },
+      { name: "Hollow body hold", reps: "40 seg", series: "3", peso: "Corporal" }
+    ]}
+  ]},
+  { name: "Semana 4", rope: false, days: [
+    { label: "Día A", name: "Descarga Empuje", exercises: [
+      { name: "Push ups (ritmo normal)", reps: "15", series: "3", peso: "Corporal" },
+      { name: "Dips en banco", reps: "12", series: "3", peso: "Corporal" },
+      { name: "Pike push ups", reps: "10", series: "3", peso: "Corporal" },
+      { name: "Sentadilla sumo", reps: "20", series: "3", peso: "Corporal" },
+      { name: "Estocadas caminando", reps: "12 por pierna", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día B", name: "Descarga Jalar", exercises: [
+      { name: "Australian pull ups", reps: "12", series: "3", peso: "Corporal" },
+      { name: "Pull ups", reps: "5 a 6", series: "3", peso: "Corporal" },
+      { name: "Superman hold", reps: "30 seg", series: "3", peso: "Corporal" },
+      { name: "Puente glúteo", reps: "15", series: "3", peso: "Corporal" },
+      { name: "Leg raises", reps: "12", series: "3", peso: "Corporal" }
+    ]},
+    { label: "Día C", name: "Descarga Full", exercises: [
+      { name: "Burpees (ritmo moderado)", reps: "8", series: "3", peso: "Corporal" },
+      { name: "Push ups", reps: "15", series: "3", peso: "Corporal" },
+      { name: "Australian pull ups", reps: "12", series: "3", peso: "Corporal" },
+      { name: "Sentadilla", reps: "20", series: "3", peso: "Corporal" },
+      { name: "Hollow body hold", reps: "30 seg", series: "3", peso: "Corporal" }
+    ]}
+  ]}
+];
+
+/* ─── STATE ─── */
+let mode = 'gym';
+let currentWeek = 0, currentDay = 0;
+const userWeights = {};
+
+function isCorporal(p) {
+  if (typeof p !== 'string') return false;
+  const l = p.toLowerCase();
+  return l === 'corporal' || l.includes('corporal') || l.includes('asistido');
+}
+function weightKey(m,w,d,e) { return `${m}_${w}_${d}_${e}`; }
+function activeClass(suffix) { return mode === 'gym' ? `active-gym` : `active-cali`; }
+function badgeClass() { return mode === 'gym' ? 'ex-badge' : 'ex-badge-cali'; }
+function weeks() { return mode === 'gym' ? gymWeeks : caliWeeks; }
+
+/* ─── MODE SWITCH ─── */
+function setMode(m) {
+  mode = m;
+  currentWeek = 0; currentDay = 0;
+  document.getElementById('btnGym').className  = 'mode-btn' + (m==='gym'  ? ' active-gym'  : '');
+  document.getElementById('btnCali').className = 'mode-btn' + (m==='cali' ? ' active-cali' : '');
+  // cardio section: hide in cali (caminata is fixed, cardio is in select)
+  document.getElementById('cardioSection').style.display = m === 'cali' ? 'block' : 'block';
+  document.getElementById('caliInfoCard').style.display = m === 'cali' ? 'block' : 'none';
+  document.getElementById('exDot').className = 'dot ' + (m === 'gym' ? 'dot-green' : 'dot-purple');
+  renderAll();
+}
+
+function renderAll() {
+  renderWeekTabs(); renderDayTabs(); renderWarmup(); renderCardio(); renderExercises();
+  renderDoneBtn();
+  // rope info
+  if (mode === 'cali') {
+    const w = caliWeeks[currentWeek];
+    document.getElementById('ropeInfo').textContent =
+      w.rope ? '🪢 Salto de cuerda: Día A y Día C (post rutina)' : '🚶 Semana de descarga: sin salto de cuerda';
+  }
+}
+
+function renderWeekTabs() {
+  const ac = activeClass();
+  document.getElementById('weekTabs').innerHTML = weeks().map((w,i) =>
+    `<div class="week-tab ${i===currentWeek ? ac : ''}" onclick="selectWeek(${i})">${w.name}</div>`).join('');
+}
+function renderDayTabs() {
+  const ac = activeClass();
+  document.getElementById('dayTabs').innerHTML = weeks()[currentWeek].days.map((d,i) =>
+    `<div class="day-tab ${i===currentDay ? ac : ''}" onclick="selectDay(${i})">
+      <div>${d.label}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">${d.name}</div>
+    </div>`).join('');
+}
+function renderWarmup() {
+  const opts = mode === 'gym' ? warmupOptionsGym : warmupOptionsCali;
+  document.getElementById('warmupSelect').innerHTML = opts.map(o =>
+    `<option>${o.name} — ${o.detail}</option>`).join('');
+}
+function renderCardio() {
+  const opts = mode === 'gym' ? cardioOptionsGym : cardioOptionsCali;
+  document.getElementById('cardioSelect').innerHTML = opts.map(o =>
+    `<option>${o.name} — ${o.detail}</option>`).join('');
+}
+function renderExercises() {
+  const day = weeks()[currentWeek].days[currentDay];
+  document.getElementById('exerciseList').innerHTML = day.exercises.map((ex, i) => {
+    const key = weightKey(mode, currentWeek, currentDay, i);
+    const corp = isCorporal(ex.peso);
+    const storedW = userWeights[key] !== undefined ? userWeights[key] : (corp ? '' : ex.peso);
+    const badge = corp
+      ? `<span class="ex-badge-corp">Corporal</span>`
+      : `<span class="${badgeClass()}">${ex.series} series</span>`;
+    const weightRow = corp ? '' : `
+      <div class="ex-weight-row">
+        <span class="ex-weight-label">Peso:</span>
+        <input class="weight-input" type="number" step="0.5" min="0" value="${storedW}" placeholder="kg"
+          oninput="saveWeight('${mode}',${currentWeek},${currentDay},${i},this.value)"/>
+        <span class="weight-unit">kg</span>
+      </div>`;
+    return `<div class="ex-row">
+      <div class="ex-header">
+        <div class="ex-thumb" style="--icon-color:${mode==='gym' ? 'var(--accent-dark)' : 'var(--accent2-dark)'};" onclick="openModal('${ex.name.replace(/'/g,"\\'")}','${ex.reps}','${ex.series}')">${getExerciseIcon(ex.name)}</div>
+        <span class="ex-name">${ex.name}</span>
+        ${badge}
+      </div>
+      <div class="ex-meta">${ex.reps}${corp ? ' · ' + ex.series + ' series' : ''}</div>
+      <div class="ex-bottom">
+        ${weightRow}
+        <button class="btn-img" onclick="openModal('${ex.name.replace(/'/g,"\\'")}','${ex.reps}','${ex.series}')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="1" y="3" width="14" height="10" rx="2"/>
+            <circle cx="5.5" cy="7" r="1.2"/>
+            <path d="M1 11l3.5-3 3 3 2.5-2.5 4 4"/>
+          </svg>
+          Ver imagen
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('doneBanner').style.display = 'none';
+}
+function renderDoneBtn() {
+  const cls = mode === 'gym' ? 'btn-done-gym' : 'btn-done-cali';
+  document.getElementById('doneBtnWrap').innerHTML =
+    `<button class="${cls}" onclick="markDone()">Marcar rutina completada</button>`;
+}
+
+function saveWeight(m,w,d,e,val) { userWeights[weightKey(m,w,d,e)] = val; }
+function selectWeek(i) {
+  currentWeek=i; currentDay=0;
+  if (mode === 'cali') {
+    const w = caliWeeks[i];
+    document.getElementById('ropeInfo').textContent =
+      w.rope ? '🪢 Salto de cuerda: Día A y Día C (post rutina)' : '🚶 Semana de descarga: sin salto de cuerda';
+  }
+  renderWeekTabs(); renderDayTabs(); renderExercises();
+}
+function selectDay(i) { currentDay=i; renderDayTabs(); renderExercises(); }
+function markDone() {
+  const b = document.getElementById('doneBanner');
+  b.style.display = 'block';
+  setTimeout(() => { b.style.display = 'none'; }, 3000);
+}
+
+function openModal(name, reps, series) {
+  document.getElementById('modalTitle').textContent = name;
+  document.getElementById('modalMeta').innerHTML =
+    `<span>Repeticiones:</span> ${reps}<br><span>Series:</span> ${series}`;
+  document.getElementById('modalSearchLink').href = getYtQuery(name);
+  const wrap = document.getElementById('modalImgWrap');
+  wrap.style.setProperty('--icon-color', mode === 'gym' ? 'var(--accent-dark)' : 'var(--accent2-dark)');
+  wrap.innerHTML = getExerciseIcon(name);
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
