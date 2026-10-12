@@ -1,0 +1,1134 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Control Faenas · Rio Yelcho SpA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* ── Tokens ─────────────────────────────────────────────── */
+:root {
+  --river-deep: #0a2540;
+  --river-mid:  #1a4b7a;
+  --river-teal: #0d7377;
+  --lake-light: #17a2b8;
+  --lake-pale:  #e0f7fa;
+  --mountain:   #4a5568;
+  --slate:      #64748b;
+  --snow:       #f0f4f8;
+  --fog:        #dde3ea;
+  --bark:       #2d3748;
+  --white:      #ffffff;
+  --accent:     #14b8a6;
+  --danger:     #e53e3e;
+  --warn:       #d69e2e;
+  --ok:         #38a169;
+  --sidebar-w:  240px;
+  --header-h:   56px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --river-deep: #06182e;
+    --river-mid:  #0f2e52;
+    --snow:       #1a2535;
+    --fog:        #263347;
+    --bark:       #c9d3e0;
+    --white:      #1a2535;
+    --mountain:   #8fa3bb;
+    --slate:      #7f96b0;
+    --lake-pale:  #0d3347;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --river-deep: #06182e;
+  --river-mid:  #0f2e52;
+  --snow:       #1a2535;
+  --fog:        #263347;
+  --bark:       #c9d3e0;
+  --white:      #1a2535;
+  --mountain:   #8fa3bb;
+  --slate:      #7f96b0;
+  --lake-pale:  #0d3347;
+  color-scheme: dark;
+}
+
+/* ── Reset ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; background: var(--snow); color: var(--bark); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+/* ── Layout ──────────────────────────────────────────────── */
+.app { display: flex; height: 100%; }
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--river-deep);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 10;
+}
+.sidebar-brand {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar-brand img { width: 110px; filter: brightness(10); }
+.sidebar-brand .tagline {
+  font-size: 10px;
+  color: rgba(255,255,255,.45);
+  margin-top: 6px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.sidebar-user {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--river-teal);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; flex-shrink: 0;
+}
+.sidebar-user-info { min-width: 0; }
+.sidebar-user-info .name { color: #fff; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-user-info .role { color: rgba(255,255,255,.4); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+
+.nav-section { padding: 12px 0 4px; }
+.nav-section-label {
+  padding: 0 16px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,.3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background .15s;
+  color: rgba(255,255,255,.65);
+  font-size: 13px;
+  font-weight: 400;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
+.nav-item.active {
+  background: rgba(20,184,166,.15);
+  color: var(--accent);
+  font-weight: 500;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 4px; bottom: 4px;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+.nav-icon { width: 16px; text-align: center; opacity: .85; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--river-teal);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+.sidebar-env {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+}
+.sidebar-env strong { color: rgba(255,255,255,.6); display: block; margin-bottom: 2px; }
+
+/* ── Main area ───────────────────────────────────────────── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Header ──────────────────────────────────────────────── */
+.header {
+  height: var(--header-h);
+  background: var(--white);
+  border-bottom: 1px solid var(--fog);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.header-title { font-size: 15px; font-weight: 600; color: var(--bark); }
+.header-subtitle { font-size: 12px; color: var(--slate); margin-left: 2px; }
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all .15s;
+}
+.btn-primary { background: var(--river-teal); color: #fff; }
+.btn-primary:hover { background: var(--river-mid); }
+.btn-ghost { background: none; border-color: var(--fog); color: var(--slate); }
+.btn-ghost:hover { border-color: var(--slate); color: var(--bark); }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500;
+}
+.chip-ok { background: #d1fae5; color: #065f46; }
+.chip-warn { background: #fef3c7; color: #92400e; }
+.chip-err { background: #fee2e2; color: #991b1b; }
+.chip-blue { background: #dbeafe; color: #1e40af; }
+.chip-teal { background: #ccfbf1; color: #0f766e; }
+
+/* ── Content ─────────────────────────────────────────────── */
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* ── Views ───────────────────────────────────────────────── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── Dashboard cards ─────────────────────────────────────── */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.module-card {
+  background: var(--white);
+  border: 1px solid var(--fog);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all .18s;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.module-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(13,115,119,.12); transform: translateY(-2px); }
+.module-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.module-name { font-size: 14px; font-weight: 600; color: var(--bark); }
+.module-desc { font-size: 12px; color: var(--slate); line-height: 1.5; }
+.module-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.perm-bar { height: 4px; border-radius: 2px; background: var(--fog); overflow: hidden; margin-top: 6px; }
+.perm-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+
+/* ── Stats row ───────────────────────────────────────────── */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--fog);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.stat-value { font-size: 26px; font-weight: 700; color: var(--river-mid); font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 11px; color: var(--slate); margin-top: 2px; }
+
+/* ── Section title ───────────────────────────────────────── */
+.section-title { font-size: 13px; font-weight: 600; color: var(--bark); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--fog); }
+
+/* ── Tables ──────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; border: 1px solid var(--fog); border-radius: 8px; background: var(--white); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead { background: var(--snow); }
+th { padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--fog); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--fog); color: var(--bark); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--snow); }
+.mono { font-family: 'DM Mono', monospace; font-size: 11px; }
+
+/* ── Forms ───────────────────────────────────────────────── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .04em; }
+.form-control {
+  padding: 8px 10px;
+  border: 1px solid var(--fog);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--bark);
+  background: var(--white);
+  outline: none;
+  transition: border-color .15s;
+}
+.form-control:focus { border-color: var(--accent); }
+.form-control[readonly] { background: var(--snow); color: var(--slate); }
+select.form-control { appearance: none; cursor: pointer; }
+.card { background: var(--white); border: 1px solid var(--fog); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+.card-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: var(--bark); }
+
+/* ── Perm matrix ─────────────────────────────────────────── */
+.perm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.perm-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--fog);
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--snow);
+}
+.perm-toggle {
+  width: 16px; height: 16px;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+}
+.perm-on { background: var(--river-teal); color: #fff; }
+.perm-off { background: var(--fog); color: var(--slate); }
+
+/* ── Activity feed ───────────────────────────────────────── */
+.feed { display: flex; flex-direction: column; gap: 0; }
+.feed-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--fog);
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.feed-body { min-width: 0; }
+.feed-text { font-size: 12px; color: var(--bark); line-height: 1.4; }
+.feed-time { font-size: 11px; color: var(--slate); margin-top: 2px; }
+
+/* ── Progress ring ───────────────────────────────────────── */
+.ring-wrap { display: flex; align-items: center; gap: 16px; }
+.ring { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+.ring svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--fog); stroke-width: 6; }
+.ring-fg { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .5s; }
+.ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--bark); }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .sidebar { position: fixed; left: -260px; top: 0; bottom: 0; transition: left .25s; }
+  .sidebar.open { left: 0; }
+  .form-grid { grid-template-columns: 1fr; }
+  .perm-grid { grid-template-columns: 1fr 1fr; }
+  .modules-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--fog); margin-bottom: 20px; }
+.tab {
+  padding: 9px 16px; font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--slate); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  background: none; border-top: none; border-left: none; border-right: none;
+  transition: all .15s;
+}
+.tab.active { color: var(--river-teal); border-bottom-color: var(--river-teal); }
+.tab:hover:not(.active) { color: var(--bark); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Watermark wave ──────────────────────────────────────── */
+.patagonia-banner {
+  background: linear-gradient(135deg, var(--river-deep) 0%, var(--river-mid) 60%, var(--river-teal) 100%);
+  border-radius: 12px;
+  padding: 20px 24px;
+  color: #fff;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.patagonia-banner::after {
+  content: '';
+  position: absolute; bottom: -10px; left: 0; right: 0; height: 50px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 50'%3E%3Cpath fill='rgba(255,255,255,0.07)' d='M0,25 C180,5 360,45 540,25 C720,5 900,45 1080,25 C1260,5 1440,35 1440,25 L1440,50 L0,50 Z'/%3E%3C/svg%3E") repeat-x bottom;
+  background-size: 1440px 50px;
+}
+.banner-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.banner-sub { font-size: 12px; opacity: .7; }
+.banner-pills { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.banner-pill {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  font-size: 11px; padding: 3px 10px; border-radius: 10px;
+}
+
+/* ── Map placeholder ─────────────────────────────────────── */
+.map-placeholder {
+  height: 200px;
+  border-radius: 8px;
+  background: linear-gradient(160deg, #0d4f5c 0%, #0a2540 40%, #1a4b7a 70%, #0d7377 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.map-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 200px 60px at 30% 70%, rgba(13,115,119,.4) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 40px at 70% 80%, rgba(23,162,184,.25) 0%, transparent 70%);
+}
+.map-label { color: rgba(255,255,255,.5); font-size: 12px; z-index: 1; }
+.map-pin {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(20,184,166,.4);
+}
+
+/* ── Inline icon sprites (SVG strings) ───────────────────── */
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QL0RXhpZgAATU0AKgAAAAgABAE7AAIAAAAOAAABSodpAAQAAAABAAABWJydAAEAAAAcAAAC0OocAAcAAAEMAAAAPgAAAAAc6gAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUGF0cmljaW8gU290bwAABZADAAIAAAAUAAACppAEAAIAAAAUAAACupKRAAIAAAADNTYAAJKSAAIAAAADNTYAAOocAAcAAAEMAAABmgAAAAAc6gAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAyNTowMzoxMCAxMjo1MTozNwAyMDI1OjAzOjEwIDEyOjUxOjM3AAAAUABhAHQAcgBpAGMAaQBvACAAUwBvAHQAbwAAAP/hBCBodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvADw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+DQo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSJ1dWlkOmZhZjViZGQ1LWJhM2QtMTFkYS1hZDMxLWQzM2Q3NTE4MmYxYiIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIi8+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iPjx4bXA6Q3JlYXRlRGF0ZT4yMDI1LTAzLTEwVDEyOjUxOjM3LjU1NjwveG1wOkNyZWF0ZURhdGU+PC9yZGY6RGVzY3JpcHRpb24+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPjxkYzpjcmVhdG9yPjxyZGY6U2VxIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+PHJkZjpsaT5QYXRyaWNpbyBTb3RvPC9yZGY6bGk+PC9yZGY6U2VxPg0KCQkJPC9kYzpjcmVhdG9yPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg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" alt="Yelcho" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span style="display:none;color:#fff;font-size:18px;font-weight:700;letter-spacing:.05em;">YELCHO</span>
+    <div class="tagline">Control Operacional de Faenas</div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="avatar">PS</div>
+    <div class="sidebar-user-info">
+      <div class="name">Patricio Soto</div>
+      <div class="role">Admin General</div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section">
+      <div class="nav-section-label">Principal</div>
+      <button class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">⊞</span> Dashboard
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Módulos</div>
+      <button class="nav-item" onclick="navigate('lca')">
+        <span class="nav-icon">🗺</span> LCA
+        <span class="nav-badge">17</span>
+      </button>
+      <button class="nav-item" onclick="navigate('dataminer')">
+        <span class="nav-icon">⛏</span> DataMiner
+        <span class="nav-badge">23</span>
+      </button>
+      <button class="nav-item" onclick="navigate('operaciones')">
+        <span class="nav-icon">⚙</span> Operaciones
+        <span class="nav-badge">7</span>
+      </button>
+      <button class="nav-item" onclick="navigate('inventario')">
+        <span class="nav-icon">📦</span> Inventario
+        <span class="nav-badge">7</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Sistema</div>
+      <button class="nav-item" onclick="navigate('admin')">
+        <span class="nav-icon">🛡</span> Administración
+        <span class="nav-badge">13</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar-env">
+    <strong>Entorno activo</strong>
+    Rio Yelcho SpA · Región de Los Lagos
+  </div>
+</aside>
+
+<!-- ── Main ────────────────────────────────────────────── -->
+<div class="main">
+  <header class="header">
+    <div>
+      <div class="header-title" id="header-title">Dashboard</div>
+      <div class="header-subtitle" id="header-subtitle">Resumen operacional · 12 Oct 2026</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm">⚙ Config</button>
+      <button class="btn btn-primary btn-sm">+ Nueva acción</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══════════════════════════════════════ -->
+    <div class="view active" id="view-dashboard">
+
+      <div class="patagonia-banner">
+        <div class="banner-title">Bienvenido, Patricio Soto</div>
+        <div class="banner-sub">Sistema activo · Rio Yelcho SpA · Panel de Control Operacional</div>
+        <div class="banner-pills">
+          <span class="banner-pill">✅ 67/67 permisos activos</span>
+          <span class="banner-pill">🌊 3 entornos habilitados</span>
+          <span class="banner-pill">🟢 API en línea</span>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Módulos activos</div></div>
+        <div class="stat-card"><div class="stat-value">67</div><div class="stat-label">Permisos vigentes</div></div>
+        <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">Usuarios registrados</div></div>
+        <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Faenas en curso</div></div>
+        <div class="stat-card"><div class="stat-value">98.3%</div><div class="stat-label">Uptime API (30d)</div></div>
+        <div class="stat-card"><div class="stat-value">284</div><div class="stat-label">Eventos auditados</div></div>
+      </div>
+
+      <div class="section-title">Módulos del sistema</div>
+      <div class="modules-grid">
+        <div class="module-card" onclick="navigate('lca')">
+          <div class="module-icon" style="background:#e0f7fa;">🗺</div>
+          <div class="module-name">LCA · Centros Acuícolas</div>
+          <div class="module-desc">Levantamiento de centros, inspecciones de terreno y reportes normativos.</div>
+          <div class="module-meta"><span class="chip chip-ok">Total</span><span style="font-size:11px;color:var(--slate)">17 permisos</span></div>
+          <div class="perm-bar"><div class="perm-fill" style="width:100%"></div></div>
+        </div>
+        <div class="module-card" onclick="navigate('dataminer')">
+          <div class="module-icon" style="background:#fef3c7;">⛏</div>
+          <div class="module-name">DataMiner</div>
+          <div class="module-desc">Formularios dinámicos, captura de datos en terreno y generación de PDFs.</div>
+          <div class="module-meta"><span class="chip chip-ok">Total</span><span style="font-size:11px;color:var(--slate)">23 permisos</span></div>
+          <div class="perm-bar"><div class="perm-fill" style="width:100%"></div></div>
+        </div>
+        <div class="module-card" onclick="navigate('operaciones')">
+          <div class="module-icon" style="background:#dbeafe;">⚙</div>
+          <div class="module-name">Operaciones</div>
+          <div class="module-desc">Control de faenas productivas, turnos y recursos asignados.</div>
+          <div class="module-meta"><span class="chip chip-ok">Total</span><span style="font-size:11px;color:var(--slate)">7 permisos</span></div>
+          <div class="perm-bar"><div class="perm-fill" style="width:100%"></div></div>
+        </div>
+        <div class="module-card" onclick="navigate('inventario')">
+          <div class="module-icon" style="background:#d1fae5;">📦</div>
+          <div class="module-name">Inventario</div>
+          <div class="module-desc">Gestión de equipos, insumos y existencias por centro productivo.</div>
+          <div class="module-meta"><span class="chip chip-ok">Total</span><span style="font-size:11px;color:var(--slate)">7 permisos</span></div>
+          <div class="perm-bar"><div class="perm-fill" style="width:100%"></div></div>
+        </div>
+        <div class="module-card" onclick="navigate('admin')">
+          <div class="module-icon" style="background:#f3e8ff;">🛡</div>
+          <div class="module-name">Administración</div>
+          <div class="module-desc">Usuarios, roles, permisos granulares, API keys y auditoría del sistema.</div>
+          <div class="module-meta"><span class="chip chip-ok">Total</span><span style="font-size:11px;color:var(--slate)">13 permisos</span></div>
+          <div class="perm-bar"><div class="perm-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="section-title">Actividad reciente</div>
+      <div class="card" style="padding:16px;">
+        <div class="feed">
+          <div class="feed-item"><div class="feed-dot" style="background:var(--ok)"></div><div class="feed-body"><div class="feed-text"><strong>psoto@innexa.cl</strong> inició sesión · Admin General</div><div class="feed-time">Hoy 08:42 · IP 192.168.1.45</div></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--lake-light)"></div><div class="feed-body"><div class="feed-text">Inspección <strong>INS-2026-041</strong> enviada en Centro Quillaipe</div><div class="feed-time">Hoy 08:15 · j.fernandez@rysp.cl</div></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--accent)"></div><div class="feed-body"><div class="feed-text">Formulario <strong>DM-Biomasa-v3</strong> activado en DataMiner</div><div class="feed-time">Ayer 17:30 · m.garcia@rysp.cl</div></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--warn)"></div><div class="feed-body"><div class="feed-text">Stock crítico: <strong>Mallas de contención 40mm</strong> — 12 unid.</div><div class="feed-time">Ayer 14:05 · Sistema</div></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--ok)"></div><div class="feed-body"><div class="feed-text">Nuevo usuario <strong>c.morales@rysp.cl</strong> creado · Rol: Supervisor</div><div class="feed-time">11 Oct · psoto@innexa.cl</div></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--danger)"></div><div class="feed-body"><div class="feed-text">API Key <strong>dm-prod-k3</strong> revocada por política de rotación</div><div class="feed-time">10 Oct · Sistema</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LCA ═══════════════════════════════════════════ -->
+    <div class="view" id="view-lca">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('lca','centros')">Centros</button>
+        <button class="tab" onclick="switchTab('lca','inspecciones')">Inspecciones</button>
+        <button class="tab" onclick="switchTab('lca','reportes')">Reportes</button>
+        <button class="tab" onclick="switchTab('lca','config')">Configuración</button>
+      </div>
+
+      <div class="tab-panel active" id="lca-centros">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="section-title" style="margin:0">Centros registrados</div>
+          <button class="btn btn-primary btn-sm">+ Nuevo centro</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Código</th><th>Centro</th><th>Región</th><th>Tipo</th><th>Estado</th><th>Últ. inspección</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="mono">CEN-001</td><td><strong>Quillaipe Norte</strong></td><td>Los Lagos</td><td><span class="chip chip-blue">Acuicultura</span></td><td><span class="chip chip-ok">Activo</span></td><td>08 Oct 2026</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+              <tr><td class="mono">CEN-002</td><td><strong>Bahía Lenca</strong></td><td>Los Lagos</td><td><span class="chip chip-blue">Acuicultura</span></td><td><span class="chip chip-ok">Activo</span></td><td>05 Oct 2026</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+              <tr><td class="mono">CEN-003</td><td><strong>Estuario Comau</strong></td><td>Los Lagos</td><td><span class="chip chip-teal">Investigación</span></td><td><span class="chip chip-warn">Revisión</span></td><td>01 Oct 2026</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+              <tr><td class="mono">CEN-004</td><td><strong>Río Yelcho Km 12</strong></td><td>Los Lagos</td><td><span class="chip chip-blue">Producción</span></td><td><span class="chip chip-ok">Activo</span></td><td>10 Oct 2026</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+              <tr><td class="mono">CEN-005</td><td><strong>Caleta Pichicolo</strong></td><td>Aysén</td><td><span class="chip chip-blue">Acuicultura</span></td><td><span class="chip chip-ok">Activo</span></td><td>07 Oct 2026</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div class="section-title">Mapa de centros</div>
+          <div class="map-placeholder">
+            <div class="map-pin" style="top:45%;left:30%"></div>
+            <div class="map-pin" style="top:55%;left:38%"></div>
+            <div class="map-pin" style="top:42%;left:50%"></div>
+            <div class="map-pin" style="top:62%;left:44%"></div>
+            <div class="map-pin" style="top:70%;left:60%"></div>
+            <span class="map-label">Región de Los Lagos · Patagonia Norte</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="lca-inspecciones">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="section-title" style="margin:0">Inspecciones</div>
+          <button class="btn btn-primary btn-sm">+ Nueva inspección</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>N°</th><th>Centro</th><th>Tipo</th><th>Inspector</th><th>Fecha</th><th>Estado</th><th>PDF</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">INS-2026-041</td><td>Quillaipe Norte</td><td>Ambiental</td><td>J. Fernández</td><td>08 Oct 2026</td><td><span class="chip chip-ok">Enviada</span></td><td><button class="btn btn-ghost btn-sm">📄 PDF</button></td></tr>
+              <tr><td class="mono">INS-2026-040</td><td>Bahía Lenca</td><td>Sanitaria</td><td>M. García</td><td>05 Oct 2026</td><td><span class="chip chip-ok">Aprobada</span></td><td><button class="btn btn-ghost btn-sm">📄 PDF</button></td></tr>
+              <tr><td class="mono">INS-2026-039</td><td>Estuario Comau</td><td>Estructural</td><td>C. Morales</td><td>01 Oct 2026</td><td><span class="chip chip-warn">Pendiente</span></td><td>—</td></tr>
+              <tr><td class="mono">INS-2026-038</td><td>Río Yelcho Km 12</td><td>Ambiental</td><td>J. Fernández</td><td>28 Sep 2026</td><td><span class="chip chip-ok">Aprobada</span></td><td><button class="btn btn-ghost btn-sm">📄 PDF</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="lca-reportes">
+        <div class="stats-row" style="margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-value">41</div><div class="stat-label">Inspecciones 2026</div></div>
+          <div class="stat-card"><div class="stat-value">38</div><div class="stat-label">Aprobadas</div></div>
+          <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Pendientes</div></div>
+          <div class="stat-card"><div class="stat-value">1</div><div class="stat-label">Observadas</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Exportar reporte</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Centro</label><select class="form-control"><option>Todos los centros</option><option>Quillaipe Norte</option><option>Bahía Lenca</option></select></div>
+            <div class="form-group"><label>Período</label><select class="form-control"><option>Octubre 2026</option><option>Q3 2026</option><option>Año 2026</option></select></div>
+            <div class="form-group"><label>Tipo</label><select class="form-control"><option>Todos</option><option>Ambiental</option><option>Sanitaria</option><option>Estructural</option></select></div>
+            <div class="form-group" style="justify-content:flex-end;flex-direction:row;align-items:flex-end;gap:8px;">
+              <button class="btn btn-ghost">Vista previa</button>
+              <button class="btn btn-primary">📄 Generar PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="lca-config">
+        <div class="card">
+          <div class="card-title">Configuración de módulo</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Módulo</label><input class="form-control" readonly value="LCA · Levantamiento de Centros Acuícolas"></div>
+            <div class="form-group"><label>Versión</label><input class="form-control" readonly value="v2.1.0"></div>
+            <div class="form-group"><label>Notificaciones email</label><select class="form-control"><option>Activadas</option><option>Desactivadas</option></select></div>
+            <div class="form-group"><label>Región por defecto</label><select class="form-control"><option>Los Lagos</option><option>Aysén</option><option>Magallanes</option></select></div>
+          </div>
+          <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary">Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DATAMINER ══════════════════════════════════════ -->
+    <div class="view" id="view-dataminer">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('dataminer','formularios')">Formularios</button>
+        <button class="tab" onclick="switchTab('dataminer','campos')">Campos</button>
+        <button class="tab" onclick="switchTab('dataminer','respuestas')">Respuestas</button>
+        <button class="tab" onclick="switchTab('dataminer','listas')">Listas</button>
+        <button class="tab" onclick="switchTab('dataminer','integracion')">Integración</button>
+      </div>
+
+      <div class="tab-panel active" id="dataminer-formularios">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="section-title" style="margin:0">Formularios activos</div>
+          <button class="btn btn-primary btn-sm">+ Crear formulario</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nombre</th><th>Categoría</th><th>Campos</th><th>Respuestas</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Control Biomasa Semanal</strong></td><td>Producción</td><td>18</td><td><span class="chip chip-blue">142</span></td><td><span class="chip chip-ok">Activo</span></td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Editar</button><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td><strong>Inspección Ambiental v3</strong></td><td>Medioambiente</td><td>31</td><td><span class="chip chip-blue">67</span></td><td><span class="chip chip-ok">Activo</span></td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Editar</button><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td><strong>Registro Mortalidad</strong></td><td>Sanidad</td><td>12</td><td><span class="chip chip-blue">89</span></td><td><span class="chip chip-ok">Activo</span></td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Editar</button><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td><strong>Calidad Agua</strong></td><td>Medioambiente</td><td>22</td><td><span class="chip chip-blue">201</span></td><td><span class="chip chip-ok">Activo</span></td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Editar</button><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td><strong>Alimentación Diaria</strong></td><td>Producción</td><td>9</td><td><span class="chip chip-blue">534</span></td><td><span class="chip chip-ok">Activo</span></td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Editar</button><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td><strong>Mantenimiento Balsas</strong></td><td>Infraestructura</td><td>15</td><td><span class="chip chip-blue">28</span></td><td><span class="chip chip-warn">Borrador</span></td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="dataminer-campos">
+        <div class="card">
+          <div class="card-title">Constructor de campos</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Nombre del campo</label><input class="form-control" placeholder="ej: temperatura_agua"></div>
+            <div class="form-group"><label>Etiqueta visible</label><input class="form-control" placeholder="ej: Temperatura del agua (°C)"></div>
+            <div class="form-group"><label>Tipo</label><select class="form-control"><option>Número decimal</option><option>Texto corto</option><option>Texto largo</option><option>Fecha</option><option>Selección</option><option>Múltiple</option><option>Archivo</option></select></div>
+            <div class="form-group"><label>Validación</label><select class="form-control"><option>Requerido</option><option>Opcional</option><option>Condicional</option></select></div>
+          </div>
+          <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="btn btn-ghost">Limpiar</button>
+            <button class="btn btn-primary">Agregar campo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="dataminer-respuestas">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-value">1,061</div><div class="stat-label">Respuestas totales</div></div>
+          <div class="stat-card"><div class="stat-value">34</div><div class="stat-label">Hoy</div></div>
+          <div class="stat-card"><div class="stat-value">6</div><div class="stat-label">Formularios activos</div></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Formulario</th><th>Centro</th><th>Usuario</th><th>Fecha/Hora</th><th>PDF</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">#1061</td><td>Alimentación Diaria</td><td>Quillaipe Norte</td><td>j.fernandez</td><td>Hoy 08:30</td><td><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td class="mono">#1060</td><td>Calidad Agua</td><td>Bahía Lenca</td><td>m.garcia</td><td>Hoy 07:55</td><td><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td class="mono">#1059</td><td>Control Biomasa Semanal</td><td>Río Yelcho Km 12</td><td>c.morales</td><td>Ayer 16:40</td><td><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+              <tr><td class="mono">#1058</td><td>Registro Mortalidad</td><td>Quillaipe Norte</td><td>j.fernandez</td><td>Ayer 15:20</td><td><button class="btn btn-ghost btn-sm">📄</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="dataminer-listas">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="section-title" style="margin:0">Listas de referencia</div>
+          <button class="btn btn-primary btn-sm">+ Nueva lista</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nombre</th><th>Ítems</th><th>Usado en</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>Tipos de especie</strong></td><td>8</td><td>4 formularios</td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+              <tr><td><strong>Centros habilitados</strong></td><td>5</td><td>6 formularios</td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+              <tr><td><strong>Tipos de incidente</strong></td><td>14</td><td>2 formularios</td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+              <tr><td><strong>Unidades de medida</strong></td><td>11</td><td>5 formularios</td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="dataminer-integracion">
+        <div class="card">
+          <div class="card-title">API de integración DataMiner</div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Endpoint base</label>
+            <input class="form-control mono" readonly value="https://api.controlfaenas.rysp.cl/v1/dataminer">
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>API Key activa</label>
+            <div style="display:flex;gap:8px;">
+              <input class="form-control mono" readonly value="dm-prod-k4-••••••••••••••••" style="flex:1">
+              <button class="btn btn-ghost">Copiar</button>
+              <button class="btn btn-ghost" style="color:var(--danger)">Revocar</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Webhook</label>
+            <input class="form-control" placeholder="https://tu-sistema.cl/webhook">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ OPERACIONES ════════════════════════════════════ -->
+    <div class="view" id="view-operaciones">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('operaciones','faenas')">Faenas activas</button>
+        <button class="tab" onclick="switchTab('operaciones','turnos')">Turnos</button>
+        <button class="tab" onclick="switchTab('operaciones','recursos')">Recursos</button>
+      </div>
+
+      <div class="tab-panel active" id="operaciones-faenas">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Faenas activas</div></div>
+          <div class="stat-card"><div class="stat-value">27</div><div class="stat-label">Personal en turno</div></div>
+          <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Centros operativos</div></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Faena</th><th>Centro</th><th>Responsable</th><th>Inicio</th><th>Estado</th><th>Avance</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>FAE-2026-012</strong><br><span style="font-size:11px;color:var(--slate)">Cosecha Jaula 4</span></td>
+                <td>Quillaipe Norte</td><td>J. Fernández</td><td>06:00</td>
+                <td><span class="chip chip-ok">En curso</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="flex:1;height:6px;background:var(--fog);border-radius:3px;"><div style="width:72%;height:100%;background:var(--accent);border-radius:3px;"></div></div>
+                    <span style="font-size:11px;color:var(--slate);font-variant-numeric:tabular-nums;">72%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>FAE-2026-013</strong><br><span style="font-size:11px;color:var(--slate)">Alimentación masiva</span></td>
+                <td>Bahía Lenca</td><td>M. García</td><td>07:30</td>
+                <td><span class="chip chip-ok">En curso</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="flex:1;height:6px;background:var(--fog);border-radius:3px;"><div style="width:45%;height:100%;background:var(--accent);border-radius:3px;"></div></div>
+                    <span style="font-size:11px;color:var(--slate);font-variant-numeric:tabular-nums;">45%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>FAE-2026-014</strong><br><span style="font-size:11px;color:var(--slate)">Mant. balsas jaulón</span></td>
+                <td>Río Yelcho Km 12</td><td>C. Morales</td><td>08:00</td>
+                <td><span class="chip chip-warn">Pausada</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="flex:1;height:6px;background:var(--fog);border-radius:3px;"><div style="width:30%;height:100%;background:var(--warn);border-radius:3px;"></div></div>
+                    <span style="font-size:11px;color:var(--slate);font-variant-numeric:tabular-nums;">30%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>FAE-2026-015</strong><br><span style="font-size:11px;color:var(--slate)">Toma muestras agua</span></td>
+                <td>Estuario Comau</td><td>L. Torres</td><td>09:00</td>
+                <td><span class="chip chip-blue">Programada</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="flex:1;height:6px;background:var(--fog);border-radius:3px;"><div style="width:0%;height:100%;background:var(--accent);border-radius:3px;"></div></div>
+                    <span style="font-size:11px;color:var(--slate);">0%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="operaciones-turnos">
+        <div class="card">
+          <div class="card-title">Turnos del día · 12 Oct 2026</div>
+          <div class="table-wrap" style="border:none;border-radius:0;">
+            <table>
+              <thead><tr><th>Turno</th><th>Horario</th><th>Personal</th><th>Centro asignado</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Mañana</strong></td><td>06:00 – 14:00</td><td>9 personas</td><td>Quillaipe Norte</td><td><span class="chip chip-ok">Activo</span></td></tr>
+                <tr><td><strong>Tarde</strong></td><td>14:00 – 22:00</td><td>7 personas</td><td>Bahía Lenca</td><td><span class="chip chip-blue">Programado</span></td></tr>
+                <tr><td><strong>Noche</strong></td><td>22:00 – 06:00</td><td>4 personas</td><td>Río Yelcho Km 12</td><td><span class="chip chip-blue">Programado</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="operaciones-recursos">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Embarcaciones activas</div></div>
+          <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">Equipos en uso</div></div>
+          <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">En mantención</div></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Recurso</th><th>Tipo</th><th>Estado</th><th>Asignado a</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Lancha Yelcho I</strong></td><td>Embarcación</td><td><span class="chip chip-ok">Operativa</span></td><td>FAE-2026-012</td></tr>
+              <tr><td><strong>Bomba sumergible 5HP</strong></td><td>Equipo</td><td><span class="chip chip-ok">Operativa</span></td><td>FAE-2026-013</td></tr>
+              <tr><td><strong>Compresor Atlas 30</strong></td><td>Equipo</td><td><span class="chip chip-warn">Mantención</span></td><td>—</td></tr>
+              <tr><td><strong>GPS Garmin 78</strong></td><td>Instrumento</td><td><span class="chip chip-ok">Operativo</span></td><td>FAE-2026-015</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INVENTARIO ══════════════════════════════════════ -->
+    <div class="view" id="view-inventario">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('inventario','stock')">Stock</button>
+        <button class="tab" onclick="switchTab('inventario','movimientos')">Movimientos</button>
+        <button class="tab" onclick="switchTab('inventario','alertas')">Alertas</button>
+      </div>
+
+      <div class="tab-panel active" id="inventario-stock">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-value">148</div><div class="stat-label">Ítems en inventario</div></div>
+          <div class="stat-card"><div class="stat-value" style="color:var(--danger)">6</div><div class="stat-label">Stock crítico</div></div>
+          <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Centros con bodega</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="section-title" style="margin:0">Existencias</div>
+          <button class="btn btn-primary btn-sm">+ Registrar entrada</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ítem</th><th>Categoría</th><th>Centro</th><th>Stock</th><th>Mín.</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Alimento pellet 5mm</strong></td><td>Alimentación</td><td>Quillaipe Norte</td><td><span style="font-variant-numeric:tabular-nums">2.400 kg</span></td><td>500 kg</td><td><span class="chip chip-ok">OK</span></td></tr>
+              <tr><td><strong>Mallas contención 40mm</strong></td><td>Infraestructura</td><td>Bahía Lenca</td><td>12 unid</td><td>20 unid</td><td><span class="chip chip-err">Crítico</span></td></tr>
+              <tr><td><strong>Oxímetro YSI Pro20</strong></td><td>Instrumentos</td><td>Quillaipe Norte</td><td>3 unid</td><td>1 unid</td><td><span class="chip chip-ok">OK</span></td></tr>
+              <tr><td><strong>Acetato de soda</strong></td><td>Tratamientos</td><td>Río Yelcho Km 12</td><td>85 kg</td><td>100 kg</td><td><span class="chip chip-warn">Bajo</span></td></tr>
+              <tr><td><strong>Línea fondeo 22mm</strong></td><td>Infraestructura</td><td>Estuario Comau</td><td>0 m</td><td>100 m</td><td><span class="chip chip-err">Sin stock</span></td></tr>
+              <tr><td><strong>Guantes nitrilo M</strong></td><td>EPP</td><td>Todos</td><td>240 pares</td><td>50 pares</td><td><span class="chip chip-ok">OK</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="inventario-movimientos">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Fecha</th><th>Ítem</th><th>Tipo</th><th>Cantidad</th><th>Centro</th><th>Responsable</th></tr></thead>
+            <tbody>
+              <tr><td>Hoy 08:00</td><td>Alimento pellet 5mm</td><td><span class="chip chip-blue">Entrada</span></td><td>+800 kg</td><td>Quillaipe Norte</td><td>j.fernandez</td></tr>
+              <tr><td>Ayer 16:30</td><td>Mallas contención 40mm</td><td><span class="chip chip-err">Salida</span></td><td>−8 unid</td><td>Bahía Lenca</td><td>m.garcia</td></tr>
+              <tr><td>Ayer 11:00</td><td>Guantes nitrilo M</td><td><span class="chip chip-blue">Entrada</span></td><td>+100 pares</td><td>Todos</td><td>Sistema</td></tr>
+              <tr><td>10 Oct</td><td>Oxímetro YSI Pro20</td><td><span class="chip chip-err">Salida</span></td><td>−1 unid</td><td>Quillaipe Norte</td><td>c.morales</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="inventario-alertas">
+        <div class="card">
+          <div class="card-title">Alertas de inventario activas</div>
+          <div class="feed">
+            <div class="feed-item"><div class="feed-dot" style="background:var(--danger)"></div><div class="feed-body"><div class="feed-text"><strong>Sin stock:</strong> Línea fondeo 22mm — Estuario Comau</div><div class="feed-time">Alerta generada: 10 Oct 2026</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--danger)"></div><div class="feed-body"><div class="feed-text"><strong>Crítico:</strong> Mallas contención 40mm — Bahía Lenca (12 de mín. 20)</div><div class="feed-time">Alerta generada: 11 Oct 2026</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--warn)"></div><div class="feed-body"><div class="feed-text"><strong>Bajo:</strong> Acetato de soda — Río Yelcho Km 12 (85 de mín. 100 kg)</div><div class="feed-time">Alerta generada: 12 Oct 2026</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN ═══════════════════════════════════════════ -->
+    <div class="view" id="view-admin">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('admin','usuarios')">Usuarios</button>
+        <button class="tab" onclick="switchTab('admin','permisos')">Permisos</button>
+        <button class="tab" onclick="switchTab('admin','apikeys')">API Keys</button>
+        <button class="tab" onclick="switchTab('admin','auditoria')">Auditoría</button>
+      </div>
+
+      <div class="tab-panel active" id="admin-usuarios">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="section-title" style="margin:0">Usuarios del sistema</div>
+          <button class="btn btn-primary btn-sm">+ Nuevo usuario</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Módulos</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Patricio Soto</strong></td>
+                <td class="mono">psoto@innexa.cl</td>
+                <td><span class="chip chip-blue">Admin General</span></td>
+                <td><div style="display:flex;gap:3px;flex-wrap:wrap;">
+                  <span class="chip chip-teal" style="font-size:10px;">LCA</span>
+                  <span class="chip chip-teal" style="font-size:10px;">DM</span>
+                  <span class="chip chip-teal" style="font-size:10px;">OPS</span>
+                  <span class="chip chip-teal" style="font-size:10px;">INV</span>
+                  <span class="chip chip-teal" style="font-size:10px;">ADM</span>
+                </div></td>
+                <td><span class="chip chip-ok">Activo</span></td>
+                <td><button class="btn btn-ghost btn-sm">Gestionar</button></td>
+              </tr>
+              <tr>
+                <td><strong>Juan Fernández</strong></td>
+                <td class="mono">j.fernandez@rysp.cl</td>
+                <td><span class="chip" style="background:#f3e8ff;color:#6b21a8;">Supervisor</span></td>
+                <td><div style="display:flex;gap:3px;flex-wrap:wrap;">
+                  <span class="chip chip-teal" style="font-size:10px;">LCA</span>
+                  <span class="chip chip-teal" style="font-size:10px;">DM</span>
+                  <span class="chip chip-teal" style="font-size:10px;">OPS</span>
+                </div></td>
+                <td><span class="chip chip-ok">Activo</span></td>
+                <td><button class="btn btn-ghost btn-sm">Gestionar</button></td>
+              </tr>
+              <tr>
+                <td><strong>María García</strong></td>
+                <td class="mono">m.garcia@rysp.cl</td>
+                <td><span class="chip" style="background:#fef9c3;color:#713f12;">Operaciones</span></td>
+                <td><div style="display:flex;gap:3px;flex-wrap:wrap;">
+                  <span class="chip chip-teal" style="font-size:10px;">DM</span>
+                  <span class="chip chip-teal" style="font-size:10px;">OPS</span>
+                </div></td>
+                <td><span class="chip chip-ok">Activo</span></td>
+                <td><button class="btn btn-ghost btn-sm">Gestionar</button></td>
+              </tr>
+              <tr>
+                <td><strong>Carlos Morales</strong></td>
+                <td class="mono">c.morales@rysp.cl</td>
+                <td><span class="chip" style="background:#f3e8ff;color:#6b21a8;">Supervisor</span></td>
+                <td><div style="display:flex;gap:3px;flex-wrap:wrap;">
+                  <span class="chip chip-teal" style="font-size:10px;">LCA</span>
+                  <span class="chip chip-teal" style="font-size:10px;">DM</span>
+                  <span class="chip chip-teal" style="font-size:10px;">INV</span>
+                </div></td>
+                <td><span class="chip chip-ok">Activo</span></td>
+                <td><button class="btn btn-ghost btn-sm">Gestionar</button></td>
+              </tr>
+              <tr>
+                <td><strong>Luis Torres</strong></td>
+                <td class="mono">l.torres@rysp.cl</td>
+                <td><span class="chip" style="background:#fef9c3;color:#713f12;">Inventario</span></td>
+                <td><div style="display:flex;gap:3px;flex-wrap:wrap;">
+                  <span class="chip chip-teal" style="font-size:10px;">INV</span>
+                </div></td>
+                <td><span class="chip chip-ok">Activo</span></td>
+                <td><button class="btn btn-ghost btn-sm">Gestionar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="admin-permisos">
+        <div class="card">
+          <div class="card-title">Matriz de permisos · Patricio Soto (Admin General)</div>
+          <div style="margin-bottom:16px;">
+            <select class="form-control" style="width:240px;">
+              <option>Patricio Soto — Admin General</option>
+              <option>Juan Fernández — Supervisor</option>
+              <option>María García — Operaciones</option>
+            </select>
+          </div>
+          <div class="section-title">LCA · Centros Acuícolas (17 permisos)</div>
+          <div class="perm-grid" style="margin-bottom:16px;">
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:centros:read</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:centros:create</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:centros:update</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:centros:delete</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:inspecciones:read</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:inspecciones:create</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:inspecciones:update</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:inspecciones:delete</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:reportes:read</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:reportes:export</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:config:read</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>lca:config:update</div>
+          </div>
+          <div class="section-title">DataMiner (23 permisos — muestra)</div>
+          <div class="perm-grid" style="margin-bottom:16px;">
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>dm:formularios:read</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>dm:formularios:create</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>dm:campos:update</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>dm:respuestas:read</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>dm:pdf:export</div>
+            <div class="perm-item"><div class="perm-toggle perm-on">✓</div>dm:integracion:manage</div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+            <button class="btn btn-ghost">Restablecer rol</button>
+            <button class="btn btn-primary">Guardar permisos</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="admin-apikeys">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="section-title" style="margin:0">API Keys</div>
+          <button class="btn btn-primary btn-sm">+ Generar nueva key</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nombre</th><th>Prefijo</th><th>Módulo</th><th>Creada</th><th>Últ. uso</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>DataMiner Producción</strong></td><td class="mono">dm-prod-k4</td><td>DataMiner</td><td>01 Oct 2026</td><td>Hoy 08:42</td><td><span class="chip chip-ok">Activa</span></td><td><button class="btn btn-ghost btn-sm" style="color:var(--danger)">Revocar</button></td></tr>
+              <tr><td><strong>LCA Externo</strong></td><td class="mono">lca-ext-k1</td><td>LCA</td><td>15 Sep 2026</td><td>05 Oct 2026</td><td><span class="chip chip-ok">Activa</span></td><td><button class="btn btn-ghost btn-sm" style="color:var(--danger)">Revocar</button></td></tr>
+              <tr><td><strong>DataMiner Producción</strong></td><td class="mono">dm-prod-k3</td><td>DataMiner</td><td>01 Ago 2026</td><td>09 Oct 2026</td><td><span class="chip chip-err">Revocada</span></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Política de seguridad</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+            <li style="font-size:12px;color:var(--slate);">✅ Las API keys se almacenan hasheadas (SHA-256 + salt)</li>
+            <li style="font-size:12px;color:var(--slate);">✅ Cada key puede ser revocada individualmente</li>
+            <li style="font-size:12px;color:var(--slate);">✅ Rotación automática recomendada cada 90 días</li>
+            <li style="font-size:12px;color:var(--slate);">⚠ SUPABASE_SERVICE_KEY nunca se expone en frontend ni logs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="admin-auditoria">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-value">284</div><div class="stat-label">Eventos registrados</div></div>
+          <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">Usuarios auditados</div></div>
+          <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Alertas seguridad</div></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Timestamp</th><th>Usuario</th><th>Acción</th><th>Recurso</th><th>IP</th><th>Resultado</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">2026-10-12 08:42:11</td><td>psoto@innexa.cl</td><td>POST /auth/login</td><td>Auth</td><td>192.168.1.45</td><td><span class="chip chip-ok">200</span></td></tr>
+              <tr><td class="mono">2026-10-12 08:30:05</td><td>j.fernandez@rysp.cl</td><td>POST /dataminer/respuestas</td><td>DM</td><td>10.0.0.12</td><td><span class="chip chip-ok">201</span></td></tr>
+              <tr><td class="mono">2026-10-11 17:30:00</td><td>m.garcia@rysp.cl</td><td>PUT /dataminer/formularios/6</td><td>DM</td><td>10.0.0.18</td><td><span class="chip chip-ok">200</span></td></tr>
+              <tr><td class="mono">2026-10-11 16:02:44</td><td>sistema</td><td>DELETE /admin/apikeys/dm-prod-k3</td><td>Admin</td><td>—</td><td><span class="chip chip-ok">200</span></td></tr>
+              <tr><td class="mono">2026-10-10 09:15:33</td><td>psoto@innexa.cl</td><td>POST /admin/users</td><td>Admin</td><td>192.168.1.45</td><td><span class="chip chip-ok">201</span></td></tr>
+              <tr><td class="mono">2026-10-09 22:01:05</td><td>anon</td><td>POST /auth/login</td><td>Auth</td><td>181.44.12.99</td><td><span class="chip chip-err">401</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+const VIEWS = {
+  dashboard: { title: 'Dashboard', subtitle: 'Resumen operacional · 12 Oct 2026' },
+  lca:       { title: 'LCA · Levantamiento de Centros Acuícolas', subtitle: 'Centros, inspecciones y reportes' },
+  dataminer: { title: 'DataMiner by INNEXA', subtitle: 'Formularios dinámicos y captura de datos' },
+  operaciones:{ title: 'Operaciones · Rio Yelcho SpA', subtitle: 'Faenas, turnos y recursos' },
+  inventario: { title: 'Inventario', subtitle: 'Stock, movimientos y alertas' },
+  admin:     { title: 'Administración del sistema', subtitle: 'Usuarios, permisos, API Keys y auditoría' },
+};
+
+function navigate(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('view-' + view);
+  if (el) el.classList.add('active');
+  const btn = [...document.querySelectorAll('.nav-item')].find(b => b.textContent.trim().startsWith(
+    view === 'dashboard' ? '⊞' : view === 'lca' ? '🗺' : view === 'dataminer' ? '⛏' :
+    view === 'operaciones' ? '⚙' : view === 'inventario' ? '📦' : '🛡'
+  ));
+  if (btn) btn.classList.add('active');
+  const info = VIEWS[view] || {};
+  document.getElementById('header-title').textContent = info.title || view;
+  document.getElementById('header-subtitle').textContent = info.subtitle || '';
+}
+
+function switchTab(module, tab) {
+  const panels = document.querySelectorAll('#view-' + module + ' .tab-panel');
+  const tabs   = document.querySelectorAll('#view-' + module + ' .tab');
+  panels.forEach(p => p.classList.remove('active'));
+  tabs.forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById(module + '-' + tab);
+  if (panel) panel.classList.add('active');
+  const clickedTab = [...tabs].find(t => t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + tab + "'"));
+  if (clickedTab) clickedTab.classList.add('active');
+}
+</script>
+</body>
+</html>
+
+</body></html>
